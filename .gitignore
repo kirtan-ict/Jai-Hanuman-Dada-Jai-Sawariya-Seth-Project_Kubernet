@@ -1,0 +1,22 @@
+# Secrets and credentials
+*.env
+.env*
+kubeconfig*
+*.kubeconfig
+*.pem
+*.key
+secrets/
+
+# Helm
+charts/*.tgz
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
