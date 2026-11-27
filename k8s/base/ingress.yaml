@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: kubesetu-site
+  labels:
+    app.kubernetes.io/name: kubesetu-site
+  annotations:
+    # Requires cert-manager and a ClusterIssuer with this name.
+    cert-manager.io/cluster-issuer: letsencrypt-prod # EDIT: your ClusterIssuer name
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
+spec:
+  ingressClassName: nginx
+  tls:
+    - hosts:
+        - kubesetu.example.com # EDIT: your domain
+      secretName: kubesetu-site-tls
+  rules:
+    - host: kubesetu.example.com # EDIT: your domain
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: kubesetu-site
+                port:
+                  name: http

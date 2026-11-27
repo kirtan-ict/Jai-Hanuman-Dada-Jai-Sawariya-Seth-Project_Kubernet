@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kubernetes Infrastructure Options | KubeSetu</title>
+  <meta name="description" content="Compare the eight ways KubeSetu runs Kubernetes: managed cloud, on-premises, bare metal, edge, hybrid and multi-cloud, enterprise platforms, air-gapped and GPU / AI.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+<section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / Infrastructure</div>
+      <span class="eyebrow">Where Kubernetes runs</span>
+      <h1>Eight ways to run Kubernetes. One team for all of them.</h1>
+      <p class="lead">Kubernetes behaves the same everywhere, but the work around it does not. Owning the control plane, the hardware or the network changes your effort, your costs and your risks. Compare the options below, then go deeper on the one that fits.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="decision-guide.html">Find my fit</a>
+        <a class="btn btn-outline" href="cost-estimator.html">Estimate costs</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Options</span>
+        <h2>Choose an infrastructure type</h2>
+        <p class="lead">Each page covers when it fits, a reference architecture, what we implement, Day-2 support and a typical timeline.</p>
+      </div>
+      <div class="grid grid-4">
+        <a class="card" href="infra-managed-cloud.html"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 18a4 4 0 0 1-.6-8A6 6 0 0 1 18 9a4.5 4.5 0 0 1-.5 9z"/></svg></div><h3>Managed cloud</h3><p class="muted">EKS, AKS, GKE, OKE, DOKS and LKE with landing zones, identity and autoscaling done right.</p><span class="card-link">Explore managed cloud &rarr;</span></a>
+        <a class="card" href="infra-on-prem.html"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></svg></div><h3>On-premises</h3><p class="muted">kubeadm or RKE2 on vSphere, OpenStack, Nutanix or Proxmox, with load balancing, storage and etcd backups.</p><span class="card-link">Explore on-premises &rarr;</span></a>
+        <a class="card" href="infra-bare-metal.html"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M9 2v2M15 2v2M9 20v2M15 20v2M2 9h2M2 15h2M20 9h2M20 15h2"/></svg></div><h3>Bare metal</h3><p class="muted">Talos, Metal3, Tinkerbell and MAAS with PXE provisioning, BGP networking and local NVMe.</p><span class="card-link">Explore bare metal &rarr;</span></a>
+        <a class="card" href="infra-edge.html"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8"/></svg></div><h3>Edge and IoT</h3><p class="muted">k3s, k0s, MicroK8s and KubeEdge fleets that survive patchy networks and update over the air.</p><span class="card-link">Explore edge &rarr;</span></a>
+        <a class="card" href="infra-hybrid.html"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="12" r="3"/><circle cx="18" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M8.7 10.7l6.6-3.4M8.7 13.3l6.6 3.4"/></svg></div><h3>Hybrid and multi-cloud</h3><p class="muted">Cluster API, Rancher, Arc and GKE Enterprise with multi-cluster networking and cross-site DR.</p><span class="card-link">Explore hybrid &rarr;</span></a>
+        <a class="card" href="infra-enterprise-platforms.html"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></div><h3>Enterprise platforms</h3><p class="muted">OpenShift, Rancher, Tanzu and Mirantis compared, implemented and supported vendor-neutrally.</p><span class="card-link">Explore platforms &rarr;</span></a>
+        <a class="card" href="infra-air-gapped.html"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div><h3>Air-gapped and sovereign</h3><p class="muted">Offline installs, Harbor, internal PKI, SBOMs and signing for regulated and isolated networks.</p><span class="card-link">Explore air-gapped &rarr;</span></a>
+        <a class="card" href="infra-gpu-ai.html"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="10" rx="2"/><circle cx="8" cy="12" r="2"/><circle cx="16" cy="12" r="2"/><path d="M6 17v3M18 17v3"/></svg></div><h3>GPU and AI</h3><p class="muted">GPU Operator, MIG, Kueue, Kubeflow, KServe, Ray and vLLM with GPU cost control.</p><span class="card-link">Explore GPU and AI &rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Side by side</span>
+        <h2>Comparison at a glance</h2>
+        <p class="lead">A simplified guide. Real effort, cost and timelines depend on scale, existing tooling and team experience.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <caption class="muted" style="caption-side:bottom;padding:10px 16px;text-align:left">Time to production assumes a first production-ready cluster with core platform services, not full application migration.</caption>
+          <thead>
+            <tr><th scope="col">Type</th><th scope="col">Control plane owned by</th><th scope="col">Best for</th><th scope="col">Typical distros and tools</th><th scope="col">Ops effort</th><th scope="col">Cost profile</th><th scope="col">Time to production</th></tr>
+          </thead>
+          <tbody>
+            <tr><th scope="row"><a href="infra-managed-cloud.html">Managed cloud</a></th><td>Cloud provider</td><td>Cloud-first teams, elastic workloads</td><td>EKS, AKS, GKE, OKE, DOKS, LKE; Karpenter</td><td>Low to medium</td><td>Opex, pay as you go; watch egress</td><td>Weeks</td></tr>
+            <tr><th scope="row"><a href="infra-on-prem.html">On-premises</a></th><td>You (on your virtualisation)</td><td>Existing data centres, data residency</td><td>kubeadm, RKE2, vSphere, OpenStack, Nutanix, Proxmox</td><td>Medium to high</td><td>Capex hardware plus hypervisor licences</td><td>Weeks to a few months</td></tr>
+            <tr><th scope="row"><a href="infra-bare-metal.html">Bare metal</a></th><td>You (directly on servers)</td><td>Performance, large steady fleets</td><td>Talos, Metal3, Tinkerbell, MAAS, Cluster API</td><td>High</td><td>Capex; lowest unit cost at scale</td><td>1–3 months</td></tr>
+            <tr><th scope="row"><a href="infra-edge.html">Edge and IoT</a></th><td>You, per site, managed centrally</td><td>Retail, factories, telecom sites</td><td>k3s, k0s, MicroK8s, KubeEdge, Fleet</td><td>Medium per site, high in aggregate</td><td>Many small hardware units plus fleet tooling</td><td>Pilot in weeks; roll-out over months</td></tr>
+            <tr><th scope="row"><a href="infra-hybrid.html">Hybrid and multi-cloud</a></th><td>Mixed: provider and you</td><td>Resilience, residency, mixed estates</td><td>Cluster API, Rancher, Azure Arc, GKE Enterprise, EKS Anywhere</td><td>High</td><td>Sum of each site plus connectivity</td><td>1–4 months</td></tr>
+            <tr><th scope="row"><a href="infra-enterprise-platforms.html">Enterprise platforms</a></th><td>You, with vendor support (or vendor-managed)</td><td>Regulated enterprises wanting one supported stack</td><td>OpenShift, ROSA, ARO, Rancher, Tanzu, MKE</td><td>Medium</td><td>Subscriptions, often per core</td><td>1–3 months</td></tr>
+            <tr><th scope="row"><a href="infra-air-gapped.html">Air-gapped</a></th><td>You, fully inside the boundary</td><td>Government, BFSI, defence, OT</td><td>RKE2, OpenShift, Talos, Harbor, Zarf, cosign</td><td>High</td><td>Capex plus supply-chain tooling and process</td><td>2–4 months</td></tr>
+            <tr><th scope="row"><a href="infra-gpu-ai.html">GPU and AI</a></th><td>Either (cloud or self-managed)</td><td>Training, fine-tuning, model serving</td><td>GPU Operator, Kueue, Kubeflow, KServe, Ray, vLLM</td><td>Medium to high</td><td>GPU-dominated; utilisation is everything</td><td>Weeks to 2 months</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col">
+      <div style="min-width:0">
+        <span class="eyebrow">How to choose</span>
+        <h2>Start from your constraints, not the technology</h2>
+        <p>Most organisations do not pick an infrastructure type; their constraints pick it for them. Work through these questions in order and the options narrow quickly.</p>
+        <ol>
+          <li><strong>Where must the data live?</strong> Regulation or contracts may rule out public cloud, or require isolation.</li>
+          <li><strong>What connectivity do sites have?</strong> No internet points to air-gapped; patchy links to edge.</li>
+          <li><strong>What do you already own?</strong> Recent hardware and virtualisation favour on-premises or bare metal.</li>
+          <li><strong>How big and experienced is the team?</strong> Small teams benefit most from managed services or a supported platform.</li>
+          <li><strong>What does the workload need?</strong> GPUs, low latency or very steady demand change the economics.</li>
+          <li><strong>Capex or opex?</strong> Budget model often decides between owned hardware and the cloud.</li>
+        </ol>
+        <div class="btn-row mt-2">
+          <a class="btn btn-primary" href="decision-guide.html">Use the decision guide</a>
+          <a class="btn btn-outline" href="resources.html">Read the resources</a>
+        </div>
+      </div>
+      <div>
+        <div class="callout">
+          <strong>Mixing is normal.</strong> Many estates combine types: managed cloud for customer-facing apps, on-premises for core systems, edge for sites and a GPU pool for AI. That is what our <a href="infra-hybrid.html">hybrid</a> practice is for.
+        </div>
+        <div class="callout warn">
+          <strong>Sometimes the answer is "not Kubernetes".</strong> A handful of services on a simple PaaS or a few VMs may serve you better. We explain when in our <a href="resources.html">resources</a>.
+        </div>
+        <div class="card mt-2">
+          <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></div>
+          <h3>Same Day-2 support everywhere</h3>
+          <p class="muted">Whatever you choose, our <a href="support.html">support plans</a> cover upgrades, patching, monitoring, backups, scaling and incident response. Implementation work is described on the <a href="services.html">services</a> page.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+</body>
+</html>

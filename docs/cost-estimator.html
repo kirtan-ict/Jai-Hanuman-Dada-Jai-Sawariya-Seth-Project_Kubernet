@@ -1,0 +1,418 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kubernetes Cluster Cost Estimator | KubeSetu</title>
+  <meta name="description" content="Rough monthly cost estimator for Kubernetes clusters across managed cloud, on-premises, bare metal, edge, hybrid, enterprise, air-gapped and GPU infrastructure, with savings opportunities.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+<section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="resources.html">Resources</a> / Cost Estimator</div>
+      <span class="eyebrow">Planning tool</span>
+      <h1>Kubernetes cluster cost estimator</h1>
+      <p class="lead">Get a rough monthly range for running your clusters and see where the biggest savings usually hide. Adjust the inputs and the estimate updates instantly.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="callout warn mb-4" role="note">
+        <strong>Rough estimate, not a quote.</strong> All unit prices in this tool are illustrative assumptions, not real provider, vendor or KubeSetu prices. Actual costs vary widely by region, provider, hardware, discounts and workload. Use the result to compare scenarios, then <a href="contact.html">talk to us</a> for a proper sizing.
+      </div>
+      <div class="two-col">
+        <form id="estimator" class="form" style="min-width:0" novalidate aria-describedby="est-help">
+          <p id="est-help" class="muted mb-0">Size the production environment; non-production environments are estimated as a fraction of it.</p>
+          <fieldset>
+            <legend>Infrastructure</legend>
+            <div class="form">
+              <div>
+                <label for="infra">Infrastructure type</label>
+                <select id="infra" name="infra">
+                  <option value="managed">Managed cloud (EKS / AKS / GKE)</option>
+                  <option value="onprem">On-premises (virtualised)</option>
+                  <option value="baremetal">Bare metal</option>
+                  <option value="edge">Edge (many small sites)</option>
+                  <option value="hybrid">Hybrid / multi-cloud</option>
+                  <option value="enterprise">Enterprise platform (subscription)</option>
+                  <option value="airgapped">Air-gapped / sovereign</option>
+                  <option value="gpu">GPU / AI (cloud)</option>
+                </select>
+              </div>
+              <div class="form-row">
+                <div>
+                  <label for="nodes">Worker nodes (production)</label>
+                  <input id="nodes" name="nodes" type="number" min="1" max="2000" step="1" value="6" inputmode="numeric">
+                </div>
+                <div>
+                  <label for="gpus">GPUs per node <span class="muted">(GPU type only)</span></label>
+                  <input id="gpus" name="gpus" type="number" min="0" max="8" step="1" value="1" inputmode="numeric">
+                </div>
+              </div>
+              <div class="form-row">
+                <div>
+                  <label for="vcpu">vCPU per node</label>
+                  <input id="vcpu" name="vcpu" type="number" min="1" max="256" step="1" value="8" inputmode="numeric">
+                </div>
+                <div>
+                  <label for="ram">RAM per node (GB)</label>
+                  <input id="ram" name="ram" type="number" min="1" max="4096" step="1" value="32" inputmode="numeric">
+                </div>
+              </div>
+              <div>
+                <label for="spot">Share of nodes on spot / preemptible: <output id="spot-out" for="spot">20%</output></label>
+                <input id="spot" name="spot" type="range" min="0" max="90" step="5" value="20" aria-describedby="spot-note">
+                <p id="spot-note" class="muted mb-0" style="font-size:.85rem">Only applies to cloud-based types.</p>
+              </div>
+            </div>
+          </fieldset>
+
+          <fieldset>
+            <legend>Environments</legend>
+            <label class="option"><input type="checkbox" name="env" value="dev" checked> Development</label>
+            <label class="option"><input type="checkbox" name="env" value="stage" checked> Staging</label>
+            <label class="option"><input type="checkbox" name="env" value="prod" checked> Production</label>
+            <label class="option"><input type="checkbox" id="cpfee" name="cpfee" checked> Include control-plane cost (managed provider fee, or dedicated control-plane nodes when self-managed)</label>
+          </fieldset>
+
+          <fieldset>
+            <legend>Storage, traffic and support</legend>
+            <div class="form">
+              <div class="form-row">
+                <div>
+                  <label for="storage">Persistent storage, all environments (GB)</label>
+                  <input id="storage" name="storage" type="number" min="0" max="1000000" step="50" value="1000" inputmode="numeric">
+                </div>
+                <div>
+                  <label for="egress">Internet egress per month (GB)</label>
+                  <input id="egress" name="egress" type="number" min="0" max="10000000" step="100" value="2000" inputmode="numeric">
+                </div>
+              </div>
+              <div class="form-row">
+                <div>
+                  <label for="support">Support tier</label>
+                  <select id="support" name="support">
+                    <option value="none">None (self-supported)</option>
+                    <option value="business">Essential (business hours)</option>
+                    <option value="extended" selected>Professional (24/7 for P1)</option>
+                    <option value="dedicated">Enterprise (24/7, named TAM)</option>
+                  </select>
+                </div>
+                <div>
+                  <label for="currency">Currency</label>
+                  <select id="currency" name="currency">
+                    <option value="USD">USD ($)</option>
+                    <option value="INR">INR (&#8377;)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+
+        <div class="sticky" style="min-width:0">
+          <div class="result-box" aria-live="polite" aria-atomic="true" id="result">
+            <span class="eyebrow">Estimated monthly cost</span>
+            <p class="price" id="range">&ndash;</p>
+            <p class="muted" id="range-note">Range reflects typical variation around the central estimate.</p>
+            <div class="table-wrap">
+              <table>
+                <caption class="muted" style="caption-side:bottom;padding:10px 16px;text-align:left">Central estimate per month, all selected environments.</caption>
+                <thead><tr><th scope="col">Item</th><th scope="col">Monthly</th></tr></thead>
+                <tbody id="breakdown"></tbody>
+              </table>
+            </div>
+            <h3 class="mt-4">Savings opportunities</h3>
+            <p>Potential saving: <strong id="savings-total">&ndash;</strong> <span class="muted" id="savings-pct"></span></p>
+            <div class="meter" aria-hidden="true"><span id="savings-meter" style="width:0"></span></div>
+            <ul class="check-list" id="savings"></ul>
+            <p class="muted mb-0" style="font-size:.85rem">Savings are applied one after another so they do not double count. They are indicative only.</p>
+            <div class="btn-row mt-2">
+              <a class="btn btn-primary btn-sm" id="infra-link" href="infra-managed-cloud.html">About this infrastructure</a>
+              <a class="btn btn-outline btn-sm" href="contact.html">Get a real sizing</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container two-col">
+      <div style="min-width:0">
+        <span class="eyebrow">Method</span>
+        <h2>How the estimate works</h2>
+        <ul class="check-list">
+          <li><strong>Compute</strong>: nodes &times; (vCPU &times; price per vCPU-hour + RAM &times; price per GB-hour) &times; 730 hours, less the spot discount on the spot share.</li>
+          <li><strong>Environments</strong>: production counts in full; staging and development are assumed to be smaller copies.</li>
+          <li><strong>Control plane</strong>: a provider fee per cluster on managed cloud, or the cost of dedicated control-plane nodes when self-managed.</li>
+          <li><strong>Licences and overheads</strong>: per-vCPU subscriptions for enterprise platforms, supply-chain tooling for air-gapped, and GPU-hours for GPU nodes.</li>
+          <li><strong>Storage, egress and support</strong>: flat illustrative rates per GB and a fixed monthly support fee.</li>
+        </ul>
+      </div>
+      <div style="min-width:0">
+        <span class="eyebrow">Next steps</span>
+        <h2>Turn the estimate into a plan</h2>
+        <p>Costs are only one input. Use the <a href="decision-guide.html">platform decision guide</a> to check which infrastructure fits your constraints, compare all options on the <a href="infrastructure.html">infrastructure overview</a>, and see how we cut waste in practice under <a href="services.html#finops">FinOps services</a>.</p>
+        <p>Already running clusters? A <a href="assessment.html">free assessment</a> usually reveals the quickest savings, such as oversized requests or idle environments.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+<script>
+(function () {
+  // EDIT: unit prices are illustrative assumptions
+  // None of these numbers are real provider, vendor or KubeSetu prices.
+  // Replace them with your own negotiated rates before relying on the output.
+  var CONFIG = {
+    usdToInr: 84,          // EDIT: fixed USD -> INR conversion constant
+    hoursPerMonth: 730,
+    rangeLow: 0.85,        // low end of displayed range (x central estimate)
+    rangeHigh: 1.25,       // high end of displayed range
+    envFactor: { prod: 1, stage: 0.35, dev: 0.25 }, // non-prod sized as a fraction of prod
+    support: { none: 0, business: 1500, extended: 4000, dedicated: 9000 }, // EDIT: USD per month
+    infra: {
+      //            per vCPU-hr  per GB RAM-hr  control plane/cluster/month  spot?  spot discount  storage/GB-month  egress/GB  licence/vCPU-month  fixed overhead/month  GPU/hr
+      managed:    { label: "Managed cloud",         page: "infra-managed-cloud.html",        vcpuHr: 0.031, gbHr: 0.0042, cp: 73,  spot: true,  spotDisc: 0.65, storage: 0.10, egress: 0.09, licence: 0,  overhead: 0,   gpuHr: 0,   commit: true  },
+      onprem:     { label: "On-premises",           page: "infra-on-prem.html",              vcpuHr: 0.022, gbHr: 0.0030, cp: 150, spot: false, spotDisc: 0,    storage: 0.06, egress: 0.02, licence: 0,  overhead: 0,   gpuHr: 0,   commit: false },
+      baremetal:  { label: "Bare metal",            page: "infra-bare-metal.html",           vcpuHr: 0.016, gbHr: 0.0022, cp: 180, spot: false, spotDisc: 0,    storage: 0.04, egress: 0.02, licence: 0,  overhead: 0,   gpuHr: 0,   commit: false },
+      edge:       { label: "Edge",                  page: "infra-edge.html",                 vcpuHr: 0.030, gbHr: 0.0040, cp: 0,   spot: false, spotDisc: 0,    storage: 0.08, egress: 0.05, licence: 0,  overhead: 300, gpuHr: 0,   commit: false },
+      hybrid:     { label: "Hybrid / multi-cloud",  page: "infra-hybrid.html",               vcpuHr: 0.027, gbHr: 0.0037, cp: 120, spot: true,  spotDisc: 0.5,  storage: 0.08, egress: 0.08, licence: 0,  overhead: 500, gpuHr: 0,   commit: true  },
+      enterprise: { label: "Enterprise platform",   page: "infra-enterprise-platforms.html", vcpuHr: 0.022, gbHr: 0.0030, cp: 150, spot: false, spotDisc: 0,    storage: 0.06, egress: 0.02, licence: 15, overhead: 0,   gpuHr: 0,   commit: false },
+      airgapped:  { label: "Air-gapped",            page: "infra-air-gapped.html",           vcpuHr: 0.024, gbHr: 0.0033, cp: 150, spot: false, spotDisc: 0,    storage: 0.07, egress: 0,    licence: 0,  overhead: 600, gpuHr: 0,   commit: false },
+      gpu:        { label: "GPU / AI (cloud)",      page: "infra-gpu-ai.html",               vcpuHr: 0.031, gbHr: 0.0042, cp: 73,  spot: true,  spotDisc: 0.6,  storage: 0.10, egress: 0.09, licence: 0,  overhead: 0,   gpuHr: 2.5, commit: true  }
+    },
+    // Savings assumptions (fractions)
+    rightsizing: 0.20,     // typical over-provisioning removed by rightsizing requests
+    targetSpot: 0.40,      // spot share we would suggest for suitable workloads
+    offHours: 0.50,        // non-prod compute saved by scaling down nights and weekends
+    commitShare: 0.70,     // share of remaining on-demand baseline covered by commitments
+    commitDisc: 0.30,      // discount from reserved / committed-use / savings plans
+    autoscaling: 0.08,     // prod-only: savings from scaling with demand instead of for peak
+    consolidation: 0.10    // self-managed: extra density from bin-packing and consolidation
+  };
+
+  var form = document.getElementById("estimator");
+  var $ = function (id) { return document.getElementById(id); };
+
+  function num(id, min, max) {
+    var v = parseFloat($(id).value);
+    if (isNaN(v)) v = 0;
+    return Math.min(max, Math.max(min, v));
+  }
+
+  function money(usd) {
+    var cur = $("currency").value;
+    var v = cur === "INR" ? usd * CONFIG.usdToInr : usd;
+    return new Intl.NumberFormat(cur === "INR" ? "en-IN" : "en-US", {
+      style: "currency", currency: cur, maximumFractionDigits: 0
+    }).format(Math.round(v));
+  }
+
+  function li(html) { var el = document.createElement("li"); el.innerHTML = html; return el; }
+
+  function calc() {
+    var t = CONFIG.infra[$("infra").value];
+    var nodes = num("nodes", 1, 2000), vcpu = num("vcpu", 1, 256), ram = num("ram", 1, 4096);
+    var gpus = t.gpuHr ? num("gpus", 0, 8) : 0;
+    var spotShare = t.spot ? num("spot", 0, 90) / 100 : 0;
+    var storage = num("storage", 0, 1e6), egress = num("egress", 0, 1e7);
+    var envs = Array.prototype.filter.call(form.querySelectorAll('input[name="env"]'), function (c) { return c.checked; })
+      .map(function (c) { return c.value; });
+    if (!envs.length) envs = ["prod"];
+    var envFactor = envs.reduce(function (s, e) { return s + CONFIG.envFactor[e]; }, 0);
+    var nonProdFactor = envFactor - (envs.indexOf("prod") >= 0 ? 1 : 0);
+
+    $("spot").disabled = !t.spot;
+    $("gpus").disabled = !t.gpuHr;
+    $("spot-out").textContent = t.spot ? Math.round(spotShare * 100) + "%" : "n/a";
+
+    var H = CONFIG.hoursPerMonth;
+    var nodeOnDemand = (vcpu * t.vcpuHr + ram * t.gbHr + gpus * t.gpuHr) * H;
+    var prodCompute = nodes * nodeOnDemand * (1 - spotShare * t.spotDisc);
+    var compute = prodCompute * envFactor;
+    var cp = $("cpfee").checked ? t.cp * envs.length : 0;
+    var licence = t.licence * vcpu * nodes * envFactor;
+    var overhead = t.overhead;
+    var stor = storage * t.storage;
+    var egr = egress * t.egress;
+    var sup = CONFIG.support[$("support").value];
+    var total = compute + cp + licence + overhead + stor + egr + sup;
+
+    $("range").innerHTML = money(total * CONFIG.rangeLow) + " &ndash; " + money(total * CONFIG.rangeHigh) + " <small>/ month</small>";
+    $("range-note").textContent = "Central estimate " + money(total) + " per month for " + envs.length +
+      " environment" + (envs.length > 1 ? "s" : "") + " on " + t.label + ".";
+
+    var rows = [
+      ["Compute" + (gpus ? " (incl. GPUs)" : ""), compute],
+      ["Control plane", cp],
+      ["Licences / subscriptions", licence],
+      ["Platform overhead", overhead],
+      ["Storage", stor],
+      ["Egress", egr],
+      ["Support", sup]
+    ];
+    var tb = $("breakdown"); tb.innerHTML = "";
+    rows.forEach(function (r) {
+      var tr = document.createElement("tr");
+      var th = document.createElement("td"); th.textContent = r[0];
+      var td = document.createElement("td"); td.textContent = money(r[1]);
+      tr.appendChild(th); tr.appendChild(td); tb.appendChild(tr);
+    });
+
+    // Savings, applied sequentially to remaining compute
+    var list = $("savings"); list.innerHTML = "";
+    var remaining = compute, saved = 0, s;
+
+    s = remaining * CONFIG.rightsizing; remaining -= s; saved += s;
+    list.appendChild(li("<strong>Rightsizing</strong>: align CPU and memory requests with real usage (assumes " +
+      Math.round(CONFIG.rightsizing * 100) + "% over-provisioning) &mdash; about " + money(s) + "."));
+
+    if (t.spot && spotShare < CONFIG.targetSpot) {
+      var perComputeUnit = remaining / Math.max(0.0001, 1 - spotShare * t.spotDisc);
+      s = perComputeUnit * (CONFIG.targetSpot - spotShare) * t.spotDisc; remaining -= s; saved += s;
+      list.appendChild(li("<strong>Spot / preemptible</strong>: move stateless and batch workloads to reach " +
+        Math.round(CONFIG.targetSpot * 100) + "% spot &mdash; about " + money(s) + "."));
+    }
+
+    if (nonProdFactor > 0) {
+      s = remaining * (nonProdFactor / envFactor) * CONFIG.offHours; remaining -= s; saved += s;
+      list.appendChild(li("<strong>Autoscaling and schedules</strong>: scale non-production down outside working hours and let nodes scale with demand &mdash; about " + money(s) + "."));
+    } else {
+      s = remaining * CONFIG.autoscaling; remaining -= s; saved += s;
+      list.appendChild(li("<strong>Autoscaling</strong>: scale pods and nodes with demand instead of sizing for peak &mdash; about " + money(s) + "."));
+    }
+
+    if (t.commit) {
+      var onDemandShare = 1 - (t.spot ? Math.max(spotShare, CONFIG.targetSpot) : 0);
+      s = remaining * onDemandShare * CONFIG.commitShare * CONFIG.commitDisc; remaining -= s; saved += s;
+      list.appendChild(li("<strong>Reserved / committed use</strong>: commit the steady baseline with savings plans or committed-use discounts &mdash; about " + money(s) + "."));
+    } else {
+      s = remaining * CONFIG.consolidation; remaining -= s; saved += s;
+      list.appendChild(li("<strong>Consolidation</strong>: improve bin-packing and retire under-used nodes or hosts &mdash; about " + money(s) + "."));
+    }
+
+    if (gpus) {
+      list.appendChild(li("<strong>GPU sharing</strong>: MIG or time-slicing for small models and notebooks can cut GPU count further; model it with us."));
+    }
+
+    $("savings-total").textContent = money(saved) + " / month";
+    var pct = total > 0 ? Math.round(saved / total * 100) : 0;
+    $("savings-pct").textContent = "(about " + pct + "% of the central estimate)";
+    $("savings-meter").style.width = Math.min(100, pct) + "%";
+
+    var link = $("infra-link");
+    link.href = t.page;
+    link.textContent = "About " + t.label.toLowerCase();
+  }
+
+  form.addEventListener("input", calc);
+  form.addEventListener("change", calc);
+  form.addEventListener("submit", function (e) { e.preventDefault(); calc(); });
+  calc();
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kubernetes for Banking, Financial Services &amp; Insurance | KubeSetu</title>
+  <meta name="description" content="Regulator-ready Kubernetes for banks, NBFCs, brokers and insurers: data localisation, PCI DSS segmentation, audit trails and tested disaster recovery.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="industries.html">Industries</a> / BFSI</div>
+      <h1>Kubernetes for banking, financial services &amp; insurance</h1>
+      <p class="lead">Modern digital channels need the speed of containers. Regulators, auditors and risk committees need proof that every change, access and byte of customer data is controlled. We build platforms that satisfy both.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Challenges</span>
+        <h2>What makes BFSI platforms different</h2>
+      </div>
+      <div class="grid grid-3">
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span>
+          <h3>Data must stay in-country</h3>
+          <p class="muted">Payment and customer data often has to be stored in India, which shapes where clusters, backups and log pipelines can run.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 15l2 2 4-4"/></svg></span>
+          <h3>Everything must be auditable</h3>
+          <p class="muted">Inspectors expect to see who changed what, when and with whose approval, across clusters that change many times a day.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+          <h3>Cardholder data scope</h3>
+          <p class="muted">Without careful segmentation, one shared cluster can pull every workload into PCI DSS scope and multiply audit effort.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.3-5.7M20 4v5h-5"/></svg></span>
+          <h3>Proven disaster recovery</h3>
+          <p class="muted">Recovery objectives must be defined, documented and demonstrated in drills, not just assumed from a backup schedule.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></span>
+          <h3>Constant attack pressure</h3>
+          <p class="muted">Financial services are a prime target. Images, APIs and identities all need hardening, monitoring and fast patching.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10l9-6 9 6M5 10v8M9 10v8M15 10v8M19 10v8M3 21h18"/></svg></span>
+          <h3>Legacy cores alongside new apps</h3>
+          <p class="muted">Core banking and policy admin systems rarely move first. Containers must integrate with them securely and predictably.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="two-col">
+        <div>
+          <span class="eyebrow">Recommended architecture</span>
+          <h2>A segmented, in-country platform with a warm DR site</h2>
+          <p class="muted">We usually run production on in-country data centres or a private cloud, with digital channels optionally on an in-region managed cloud. The pattern below keeps regulated workloads isolated and every action traceable.</p>
+          <ul class="check-list">
+            <li>Separate clusters or dedicated node pools for the cardholder data environment, with default-deny network policies.</li>
+            <li>Ingress through a web application firewall and API gateway, with mutual TLS between services.</li>
+            <li>Secrets held in Vault or an HSM-backed key service, never in plain manifests.</li>
+            <li>Admission policies that block unsigned images, privileged pods and unapproved registries.</li>
+            <li>Kubernetes API audit logs and GitOps history shipped to your SIEM with retention you control.</li>
+            <li>A second site in-country with replicated state, Velero backups and scheduled failover drills.</li>
+          </ul>
+        </div>
+        <figure class="diagram" style="margin:0">
+          <svg viewBox="0 0 360 420" role="img" aria-label="BFSI reference architecture: customer channels enter through a WAF and API gateway into segmented application, payment and batch zones, governed by policy, secrets and audit services, running on a primary in-country site with a disaster recovery site." xmlns="http://www.w3.org/2000/svg">
+            <title>BFSI Kubernetes reference architecture</title>
+            <rect class="d-box" x="12" y="12" width="336" height="58" rx="8"/>
+            <text class="d-text" x="180" y="34" text-anchor="middle">Customer and partner channels</text>
+            <text class="d-sub" x="180" y="52" text-anchor="middle">mobile, net banking, branch, open APIs</text>
+            <path class="d-line" d="M180 70V96M174 90L180 96L186 90"/>
+            <rect class="d-brand" x="12" y="96" width="164" height="58" rx="8"/>
+            <text class="d-text" x="94" y="118" text-anchor="middle">WAF and ingress</text>
+            <text class="d-sub" x="94" y="136" text-anchor="middle">DDoS and rate limits</text>
+            <rect class="d-brand" x="184" y="96" width="164" height="58" rx="8"/>
+            <text class="d-text" x="266" y="118" text-anchor="middle">API gateway</text>
+            <text class="d-sub" x="266" y="136" text-anchor="middle">OAuth and mTLS</text>
+            <path class="d-line" d="M180 154V180M174 174L180 180L186 174"/>
+            <rect class="d-box" x="12" y="180" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="65.3" y="202" text-anchor="middle">Digital apps</text>
+            <text class="d-sub" x="65.3" y="218" text-anchor="middle">per-team</text>
+            <text class="d-sub" x="65.3" y="231" text-anchor="middle">namespaces</text>
+            <rect class="d-accent" x="126.7" y="180" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="180" y="202" text-anchor="middle">Payments</text>
+            <text class="d-sub" x="180" y="218" text-anchor="middle">PCI zone,</text>
+            <text class="d-sub" x="180" y="231" text-anchor="middle">dedicated nodes</text>
+            <rect class="d-box" x="241.3" y="180" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="294.6" y="202" text-anchor="middle">Batch</text>
+            <text class="d-sub" x="294.6" y="218" text-anchor="middle">EOD, reports,</text>
+            <text class="d-sub" x="294.6" y="231" text-anchor="middle">core adapters</text>
+            <path class="d-line" d="M180 238V264M174 258L180 264L186 258"/>
+            <rect class="d-brand" x="12" y="264" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="65.3" y="286" text-anchor="middle">Policy</text>
+            <text class="d-sub" x="65.3" y="302" text-anchor="middle">Kyverno, PSA,</text>
+            <text class="d-sub" x="65.3" y="315" text-anchor="middle">signed images</text>
+            <rect class="d-brand" x="126.7" y="264" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="180" y="286" text-anchor="middle">Secrets</text>
+            <text class="d-sub" x="180" y="302" text-anchor="middle">Vault or HSM</text>
+            <text class="d-sub" x="180" y="315" text-anchor="middle">backed KMS</text>
+            <rect class="d-brand" x="241.3" y="264" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="294.6" y="286" text-anchor="middle">Audit</text>
+            <text class="d-sub" x="294.6" y="302" text-anchor="middle">API logs</text>
+            <text class="d-sub" x="294.6" y="315" text-anchor="middle">to SIEM</text>
+            <path class="d-line" d="M180 322V348M174 342L180 348L186 342"/>
+            <rect class="d-box" x="12" y="348" width="164" height="58" rx="8"/>
+            <text class="d-text" x="94" y="370" text-anchor="middle">Primary site</text>
+            <text class="d-sub" x="94" y="388" text-anchor="middle">in-country data centre</text>
+            <rect class="d-accent" x="184" y="348" width="164" height="58" rx="8"/>
+            <text class="d-text" x="266" y="370" text-anchor="middle">DR site</text>
+            <text class="d-sub" x="266" y="388" text-anchor="middle">replication and Velero</text>
+          </svg>
+          <figcaption>Regulated payment workloads sit in their own zone; policy, secrets and audit services apply to every zone.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Compliance &amp; security controls</span>
+        <h2>From requirement to Kubernetes control</h2>
+        <p class="muted">How common BFSI expectations translate into concrete platform settings.</p>
+      </div>
+      <div class="table-wrap">
+        <table aria-label="BFSI compliance requirements and how they are implemented on Kubernetes">
+          <thead><tr><th scope="col">Requirement</th><th scope="col">How we implement it on Kubernetes</th></tr></thead>
+          <tbody>
+            <tr><td>Data localisation for payment and customer data, as expected under RBI directions</td><td>Clusters, persistent volumes, backups, registries and log stores placed only in in-country regions or data centres; policies that reject storage classes or endpoints outside them.</td></tr>
+            <tr><td>RBI and SEBI expectations on IT governance, cyber security and outsourcing</td><td>Documented shared-responsibility model, role-based access mapped to job functions, vulnerability management cadence, and evidence packs produced from Git and cluster logs.</td></tr>
+            <tr><td>PCI DSS: segment and protect the cardholder data environment</td><td>Dedicated clusters or tainted node pools for payment services, default-deny network policies, service mesh mTLS, and no shared nodes with out-of-scope workloads.</td></tr>
+            <tr><td>Strong access control and least privilege</td><td>SSO with MFA into the cluster, short-lived credentials, namespace-scoped RBAC, break-glass accounts that alert on use.</td></tr>
+            <tr><td>Tamper-evident audit trails</td><td>Kubernetes API audit policy, GitOps commit and approval history, and immutable forwarding to your SIEM with agreed retention.</td></tr>
+            <tr><td>Business continuity and disaster recovery</td><td>Defined RPO and RTO per service, cross-site replication, Velero backups with restore tests, and scheduled DR drills with written reports.</td></tr>
+            <tr><td>Secure software supply chain</td><td>Image scanning in CI, signed images verified at admission, private registry mirrors, and an SBOM for every release.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warn mt-4"><strong>Not legal advice.</strong> RBI, SEBI, IRDAI and PCI DSS requirements are summarised here in general terms. Your compliance and legal teams should confirm which directions and standards apply to your entity.</div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Infrastructure</span>
+        <h2>Recommended infrastructure types</h2>
+      </div>
+      <div class="grid grid-4">
+        <a class="card" href="infra-on-prem.html"><h3>On-premises</h3><p class="muted">Full control in your own data centres for core and regulated workloads.</p><span class="card-link">Learn more &rarr;</span></a>
+        <a class="card" href="infra-enterprise-platforms.html"><h3>OpenShift / Rancher / Tanzu</h3><p class="muted">Vendor-backed platforms many banks already license and audit.</p><span class="card-link">Learn more &rarr;</span></a>
+        <a class="card" href="infra-hybrid.html"><h3>Hybrid &amp; multi-cloud</h3><p class="muted">Keep the core on-premises while digital channels burst to an in-region cloud.</p><span class="card-link">Learn more &rarr;</span></a>
+        <a class="card" href="infra-managed-cloud.html"><h3>Managed cloud</h3><p class="muted">EKS, AKS or GKE in India regions for customer-facing apps.</p><span class="card-link">Learn more &rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Services</span>
+        <h2>Relevant services</h2>
+      </div>
+      <div class="grid grid-3">
+        <a class="card" href="services.html#security"><h3>Security &amp; compliance</h3><p class="muted">CIS hardening, policy as code, supply-chain security and audit evidence.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#reliability"><h3>Reliability &amp; DR</h3><p class="muted">Backup, multi-site failover and recovery drills you can show an inspector.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#gitops"><h3>GitOps &amp; CI/CD</h3><p class="muted">Approved, reviewed and traceable change from commit to cluster.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#migration"><h3>Migration</h3><p class="muted">Move channel and middleware apps off VMs without disrupting the core.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#observability"><h3>Observability</h3><p class="muted">Metrics, logs and traces with SIEM integration for security operations.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="support.html"><h3>24/7 support</h3><p class="muted">Round-the-clock incident response for systems that never close.</p><span class="card-link">See plans &rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Sample roadmap</span>
+        <h2>A typical BFSI engagement</h2>
+        <p class="muted">Durations depend on scope, approvals and existing tooling; we agree a plan after the assessment.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><h3>Assess</h3><p class="muted">Map applications, data flows and regulatory scope; identify the cardholder data environment.</p></div>
+        <div class="step"><h3>Design</h3><p class="muted">Agree segmentation, DR objectives and the control matrix with risk and audit stakeholders.</p></div>
+        <div class="step"><h3>Build</h3><p class="muted">Provision hardened clusters, GitOps, policy, secrets and audit pipelines as code.</p></div>
+        <div class="step"><h3>Prove</h3><p class="muted">Run penetration tests, restore tests and a DR drill; hand over an evidence pack.</p></div>
+        <div class="step"><h3>Operate</h3><p class="muted">Move workloads in waves, then support, patch and upgrade under agreed SLAs.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">FAQ</span><h2>BFSI questions</h2></div>
+      <div class="faq">
+        <details><summary>Can Kubernetes be used for PCI DSS workloads?</summary><div>Yes. PCI DSS does not prohibit containers. What matters is that the cardholder data environment is clearly segmented, access is controlled and logged, and systems are hardened and patched. We design cluster and network boundaries to keep that scope as small as practical.</div></details>
+        <details><summary>Do we have to stay on-premises to meet localisation rules?</summary><div>Not necessarily. Many organisations use cloud regions located in India for some workloads. The key is to ensure that data, backups, logs and replicas all remain within approved locations, and that your outsourcing and risk processes cover the provider.</div></details>
+        <details><summary>How do you produce evidence for auditors?</summary><div>Because the platform is defined in Git, we can show approved changes, policy definitions and their enforcement history. Cluster audit logs and policy reports are exported to your SIEM, and we prepare a control-to-evidence mapping during the project.</div></details>
+        <details><summary>Will you work with our existing OpenShift or Tanzu licences?</summary><div>Yes. We build on upstream Kubernetes and on enterprise distributions, and can harden and operate what you already own rather than replacing it.</div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+</body>
+</html>

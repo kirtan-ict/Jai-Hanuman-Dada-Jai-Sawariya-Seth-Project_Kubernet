@@ -1,0 +1,7 @@
+# Allow-list: only the site and the nginx config go into the build context.
+*
+!docs/
+!deploy/nginx/
+docs/_template.html
+**/.DS_Store
+**/Thumbs.db

@@ -1,0 +1,33 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: jai-hanuman-dada
+
+resources:
+  - ../../base
+
+labels:
+  - pairs:
+      environment: prod
+    includeSelectors: false
+
+images:
+  - name: ghcr.io/kirtan-ict/kubesetu-site
+    # EDIT: pin to an immutable tag pushed by CI, e.g. sha-1a2b3c4 (see the GHCR package page).
+    newTag: sha-0000000
+
+replicas:
+  - name: kubesetu-site
+    count: 3
+
+patches:
+  - target:
+      kind: HorizontalPodAutoscaler
+      name: kubesetu-site
+    patch: |-
+      - op: replace
+        path: /spec/minReplicas
+        value: 3
+      - op: replace
+        path: /spec/maxReplicas
+        value: 10

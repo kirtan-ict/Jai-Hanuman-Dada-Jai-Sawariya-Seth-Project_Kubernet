@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kubernetes for Healthcare &amp; Life Sciences | KubeSetu</title>
+  <meta name="description" content="Kubernetes platforms for hospitals, health-tech and research teams: patient data protection, HIPAA-aligned controls, HL7 and FHIR workloads and GPU research clusters.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="industries.html">Industries</a> / Healthcare &amp; life sciences</div>
+      <h1>Kubernetes for healthcare &amp; life sciences</h1>
+      <p class="lead">Clinical systems must be available every minute, patient records must stay private, and research teams want GPUs yesterday. We build platforms that protect health data while giving engineers and scientists room to move.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Challenges</span>
+        <h2>What makes healthcare platforms different</h2>
+      </div>
+      <div class="grid grid-3">
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+          <h3>Highly sensitive data</h3>
+          <p class="muted">Health records, images and genomic data demand encryption, strict access control and a clear record of who viewed what.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="2"/><circle cx="5" cy="19" r="2"/><circle cx="19" cy="19" r="2"/><path d="M12 7v5M12 12l-6 5M12 12l6 5"/></svg></span>
+          <h3>Interoperability workloads</h3>
+          <p class="muted">HL7 v2 feeds, FHIR APIs and DICOM traffic connect many systems, and a stalled interface engine can delay care.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></span>
+          <h3>Clinical uptime</h3>
+          <p class="muted">Patient-facing and clinician-facing systems need maintenance windows that never interrupt a ward round.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg></span>
+          <h3>Research compute demand</h3>
+          <p class="muted">Imaging models, genomics pipelines and AI research compete for expensive GPUs that sit idle without good scheduling.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 15l2 2 4-4"/></svg></span>
+          <h3>Validated environments</h3>
+          <p class="muted">Life sciences teams working under GxP-style expectations need reproducible, documented and change-controlled systems.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span>
+          <h3>Many jurisdictions</h3>
+          <p class="muted">A product sold in the US, EU and India may need to satisfy HIPAA, GDPR and the DPDP Act at the same time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="two-col">
+        <div>
+          <span class="eyebrow">Recommended architecture</span>
+          <h2>Separate clinical and research zones on one governed platform</h2>
+          <p class="muted">Clinical integration and patient-facing apps run on a hardened, highly available cluster. Research workloads get their own GPU cluster with de-identified data, sharing identity, policy and observability.</p>
+          <ul class="check-list">
+            <li>Encryption at rest for volumes and etcd, and TLS or mTLS for all service traffic.</li>
+            <li>Dedicated namespaces and network policies for FHIR, HL7 and imaging services.</li>
+            <li>Access through SSO with MFA, plus audit logs that capture both cluster and application access.</li>
+            <li>A GPU cluster with the NVIDIA GPU Operator, queueing (for example Kueue) and quotas per research group.</li>
+            <li>De-identification or pseudonymisation steps before data leaves the clinical zone.</li>
+            <li>Backups with tested restores and multi-zone or multi-site placement for clinical services.</li>
+          </ul>
+        </div>
+        <figure class="diagram" style="margin:0">
+          <svg viewBox="0 0 360 420" role="img" aria-label="Healthcare reference architecture: clinicians, patients and partner systems connect through a secure gateway to a clinical cluster running FHIR, HL7 and imaging services. A de-identification pipeline feeds a separate GPU research cluster. Identity, encryption and audit services span both, with backups across sites." xmlns="http://www.w3.org/2000/svg">
+            <title>Healthcare Kubernetes reference architecture</title>
+            <rect class="d-box" x="12" y="12" width="336" height="58" rx="8"/>
+            <text class="d-text" x="180" y="34" text-anchor="middle">Clinicians, patients, partner systems</text>
+            <text class="d-sub" x="180" y="52" text-anchor="middle">portals, EHR, labs, imaging modalities</text>
+            <path class="d-line" d="M180 70V96M174 90L180 96L186 90"/>
+            <rect class="d-brand" x="12" y="96" width="336" height="58" rx="8"/>
+            <text class="d-text" x="180" y="118" text-anchor="middle">Secure gateway</text>
+            <text class="d-sub" x="180" y="136" text-anchor="middle">WAF, SMART on FHIR auth, mTLS</text>
+            <path class="d-line" d="M180 154V180M174 174L180 180L186 174"/>
+            <rect class="d-box" x="12" y="180" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="65.3" y="202" text-anchor="middle">FHIR APIs</text>
+            <text class="d-sub" x="65.3" y="218" text-anchor="middle">patient and</text>
+            <text class="d-sub" x="65.3" y="231" text-anchor="middle">clinical data</text>
+            <rect class="d-box" x="126.7" y="180" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="180" y="202" text-anchor="middle">HL7 engine</text>
+            <text class="d-sub" x="180" y="218" text-anchor="middle">interface</text>
+            <text class="d-sub" x="180" y="231" text-anchor="middle">feeds, queues</text>
+            <rect class="d-box" x="241.3" y="180" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="294.6" y="202" text-anchor="middle">Imaging</text>
+            <text class="d-sub" x="294.6" y="218" text-anchor="middle">DICOM and</text>
+            <text class="d-sub" x="294.6" y="231" text-anchor="middle">viewers</text>
+            <path class="d-line" d="M180 238V264M174 258L180 264L186 258"/>
+            <rect class="d-brand" x="12" y="264" width="164" height="58" rx="8"/>
+            <text class="d-text" x="94" y="286" text-anchor="middle">De-identification</text>
+            <text class="d-sub" x="94" y="304" text-anchor="middle">before research use</text>
+            <rect class="d-accent" x="184" y="264" width="164" height="58" rx="8"/>
+            <text class="d-text" x="266" y="286" text-anchor="middle">GPU research cluster</text>
+            <text class="d-sub" x="266" y="304" text-anchor="middle">queues and quotas</text>
+            <path class="d-line" d="M176 293H184M178 289L184 293L178 297"/>
+            <path class="d-line" d="M180 322V348M174 342L180 348L186 342"/>
+            <rect class="d-brand" x="12" y="348" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="65.3" y="370" text-anchor="middle">Identity</text>
+            <text class="d-sub" x="65.3" y="386" text-anchor="middle">SSO, MFA, RBAC</text>
+            <rect class="d-brand" x="126.7" y="348" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="180" y="370" text-anchor="middle">Encryption</text>
+            <text class="d-sub" x="180" y="386" text-anchor="middle">KMS, TLS</text>
+            <rect class="d-brand" x="241.3" y="348" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="294.6" y="370" text-anchor="middle">Audit</text>
+            <text class="d-sub" x="294.6" y="386" text-anchor="middle">access logs</text>
+          </svg>
+          <figcaption>Identifiable data stays in the clinical zone; research uses de-identified copies on dedicated GPU capacity.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Compliance &amp; security controls</span>
+        <h2>From requirement to Kubernetes control</h2>
+      </div>
+      <div class="table-wrap">
+        <table aria-label="Healthcare compliance requirements and how they are implemented on Kubernetes">
+          <thead><tr><th scope="col">Requirement</th><th scope="col">How we implement it on Kubernetes</th></tr></thead>
+          <tbody>
+            <tr><td>HIPAA Security Rule technical safeguards: access control, audit controls, integrity, transmission security</td><td>Namespace-scoped RBAC tied to SSO groups, Kubernetes API and application audit logs, signed images with admission checks, and mTLS between services.</td></tr>
+            <tr><td>Business associate arrangements with service providers (US)</td><td>We help you confirm that every cloud or managed service handling protected health information is covered, and keep those services in an approved list enforced by policy.</td></tr>
+            <tr><td>Protection of personal data under India's DPDP Act and the EU GDPR</td><td>Data residency through region pinning, purpose-specific namespaces, data minimisation in logs, and documented deletion procedures for backups and volumes.</td></tr>
+            <tr><td>Encryption of data at rest and in transit</td><td>Encrypted storage classes, etcd encryption with a KMS provider, TLS at ingress and service-mesh encryption inside the cluster.</td></tr>
+            <tr><td>Availability and contingency planning</td><td>Multi-zone control planes, pod disruption budgets, tested backup and restore for FHIR stores and interface queues.</td></tr>
+            <tr><td>Validated and reproducible systems for regulated research (GxP-style expectations)</td><td>Version-pinned GitOps releases, change approvals in pull requests, immutable images and documented environment specifications.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warn mt-4"><strong>Not legal advice.</strong> HIPAA, GDPR, the DPDP Act and GxP expectations are described in general terms. Your privacy officer and legal counsel should confirm which obligations apply.</div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Infrastructure</span><h2>Recommended infrastructure types</h2></div>
+      <div class="grid grid-4">
+        <a class="card" href="infra-hybrid.html"><h3>Hybrid</h3><p class="muted">Clinical systems on-premises, patient apps and analytics in the cloud.</p><span class="card-link">Learn more &rarr;</span></a>
+        <a class="card" href="infra-on-prem.html"><h3>On-premises</h3><p class="muted">Close to hospital systems and imaging devices, under your physical control.</p><span class="card-link">Learn more &rarr;</span></a>
+        <a class="card" href="infra-gpu-ai.html"><h3>GPU &amp; AI</h3><p class="muted">Shared GPU clusters for imaging, genomics and model training.</p><span class="card-link">Learn more &rarr;</span></a>
+        <a class="card" href="infra-managed-cloud.html"><h3>Managed cloud</h3><p class="muted">EKS, AKS or GKE using services covered by your provider agreements.</p><span class="card-link">Learn more &rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Services</span><h2>Relevant services</h2></div>
+      <div class="grid grid-3">
+        <a class="card" href="services.html#security"><h3>Security &amp; compliance</h3><p class="muted">Encryption, policy as code and audit logging aligned to your safeguards.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#ai"><h3>GPU &amp; AI platforms</h3><p class="muted">Scheduling, quotas and MLOps tooling for research teams.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#migration"><h3>Migration</h3><p class="muted">Move interface engines and portals from VMs with minimal downtime.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#reliability"><h3>Reliability</h3><p class="muted">High availability, backup and restore for clinical workloads.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#observability"><h3>Observability</h3><p class="muted">Monitoring that catches a stuck HL7 queue before clinicians do.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="support.html"><h3>24/7 support</h3><p class="muted">Engineers on call for systems that care depends on.</p><span class="card-link">See plans &rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Sample roadmap</span>
+        <h2>A typical healthcare engagement</h2>
+        <p class="muted">Timelines vary with scope, data classification and approvals.</p>
+      </div>
+      <div class="steps">
+        <div class="step"><h3>Discover</h3><p class="muted">Classify data, map interfaces and identify which systems hold protected health information.</p></div>
+        <div class="step"><h3>Design</h3><p class="muted">Define clinical and research zones, safeguards and availability targets.</p></div>
+        <div class="step"><h3>Build</h3><p class="muted">Deliver hardened clusters, encryption, identity, audit and GPU scheduling as code.</p></div>
+        <div class="step"><h3>Migrate</h3><p class="muted">Move interfaces and apps in planned waves with rollback and parallel running.</p></div>
+        <div class="step"><h3>Support</h3><p class="muted">Operate, patch and upgrade around clinical schedules with 24/7 cover.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">FAQ</span><h2>Healthcare questions</h2></div>
+      <div class="faq">
+        <details><summary>Is Kubernetes HIPAA compliant?</summary><div>No technology is compliant on its own. HIPAA applies to how an organisation protects health information. Kubernetes can support the required safeguards when it is configured with access control, encryption, audit logging and sound operational processes, which is what we put in place.</div></details>
+        <details><summary>Can we run HL7 interface engines and FHIR servers in containers?</summary><div>Yes. Many interface engines and FHIR servers run well in containers. We pay particular attention to persistent queues, ordered message processing and safe rolling updates so that feeds are not lost or duplicated.</div></details>
+        <details><summary>How do research teams share GPUs fairly?</summary><div>We use the GPU Operator with queueing, quotas and priority classes so each group gets a fair share, idle capacity can be borrowed, and usage can be reported back to departments or grants.</div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+</body>
+</html>

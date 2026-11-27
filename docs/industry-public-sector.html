@@ -1,0 +1,283 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kubernetes for Government &amp; Public Sector | KubeSetu</title>
+  <meta name="description" content="Kubernetes for government departments and public bodies: sovereign and air-gapped platforms, data residency, DPDP Act-aware data handling, MeitY-empanelled cloud options and accessible services.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="industries.html">Industries</a> / Government &amp; public sector</div>
+      <h1>Kubernetes for government &amp; public sector</h1>
+      <p class="lead">Citizen services must be secure, available and accessible to everyone, often on infrastructure the department controls end to end. We build sovereign Kubernetes platforms, including fully air-gapped ones, with long support lifecycles and documentation that survives staff changes.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Challenges</span><h2>What makes public-sector platforms different</h2></div>
+      <div class="grid grid-3">
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span>
+          <h3>Data residency and sovereignty</h3>
+          <p class="muted">Citizen data, logs and backups must stay within the country and under clear government control.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2l20 20M8.5 16.5a5 5 0 0 1 7 0M5 13a10 10 0 0 1 5.2-2.8M19 13a10 10 0 0 0-2-1.5M12 20h.01"/></svg></span>
+          <h3>Air-gapped networks</h3>
+          <p class="muted">Sensitive systems may have no internet access at all, which changes how images, updates and patches arrive.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></span>
+          <h3>Supply-chain trust</h3>
+          <p class="muted">Every component must be traceable and verified before it enters a government network.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="4.5" r="1.5"/><path d="M5 8l7 1.5L19 8M12 9.5V14l-3 7M12 14l3 7"/></svg></span>
+          <h3>Services for everyone</h3>
+          <p class="muted">Citizen portals must work for people using screen readers, slow connections and low-cost phones.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 15l4-4 3 3 6-6"/></svg></span>
+          <h3>Sudden demand spikes</h3>
+          <p class="muted">Result announcements, scheme deadlines and filing dates create short, intense surges in traffic.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><path d="M14 3v6h6M9 15l2 2 4-4"/></svg></span>
+          <h3>Procurement and audit</h3>
+          <p class="muted">Projects are tendered, audited and handed over between vendors, so documentation and open standards matter.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="two-col">
+        <div>
+          <span class="eyebrow">Recommended architecture</span>
+          <h2>A sovereign platform with an air-gapped option</h2>
+          <p class="muted">Public-facing services run in a government data centre or on a MeitY-empanelled cloud offering in India. Sensitive internal systems run in a separate air-gapped enclave that receives software only through a controlled transfer process.</p>
+          <ul class="check-list">
+            <li>Clusters in government data centres or empanelled cloud regions inside India, including backups and logs.</li>
+            <li>A private registry and package mirror; images are scanned, signed and transferred into the enclave through a one-way or controlled process.</li>
+            <li>Admission policies that accept only signed images from internal registries.</li>
+            <li>Central audit logging and integration with the department's security operations and incident reporting process.</li>
+            <li>Autoscaling and load testing for announcement days on the public-facing tier.</li>
+            <li>Open-source components and full runbooks, so the platform is not locked to any single vendor.</li>
+          </ul>
+        </div>
+        <figure class="diagram" style="margin:0">
+          <svg viewBox="0 0 360 420" role="img" aria-label="Public sector reference architecture: citizens reach accessible portals through a CDN and WAF hosted in a government data centre or empanelled cloud in India. A connected staging zone scans and signs software, which passes through a controlled transfer into an air-gapped enclave with its own registry, clusters and audit logging." xmlns="http://www.w3.org/2000/svg">
+            <title>Government and public sector Kubernetes reference architecture</title>
+            <rect class="d-box" x="12" y="12" width="336" height="58" rx="8"/>
+            <text class="d-text" x="180" y="34" text-anchor="middle">Citizens and officials</text>
+            <text class="d-sub" x="180" y="52" text-anchor="middle">accessible web and mobile services</text>
+            <path class="d-line" d="M180 70V96M174 90L180 96L186 90"/>
+            <rect class="d-brand" x="12" y="96" width="336" height="58" rx="8"/>
+            <text class="d-text" x="180" y="118" text-anchor="middle">Public tier in India</text>
+            <text class="d-sub" x="180" y="136" text-anchor="middle">govt DC or empanelled cloud, WAF, autoscaling</text>
+            <path class="d-line" d="M180 154V180M174 174L180 180L186 174"/>
+            <rect class="d-box" x="12" y="180" width="164" height="58" rx="8"/>
+            <text class="d-text" x="94" y="202" text-anchor="middle">Staging zone</text>
+            <text class="d-sub" x="94" y="220" text-anchor="middle">scan, sign, SBOM</text>
+            <rect class="d-accent" x="184" y="180" width="164" height="58" rx="8"/>
+            <text class="d-text" x="266" y="202" text-anchor="middle">Controlled transfer</text>
+            <text class="d-sub" x="266" y="220" text-anchor="middle">one-way or approved</text>
+            <path class="d-line" d="M176 209H184M178 205L184 209L178 213"/>
+            <path class="d-line" d="M266 238V264M260 258L266 264L272 258"/>
+            <rect class="d-accent" x="12" y="264" width="336" height="142" rx="10"/>
+            <text class="d-text" x="180" y="286" text-anchor="middle">Air-gapped enclave</text>
+            <rect class="d-box" x="24" y="300" width="98" height="52" rx="8"/>
+            <text class="d-text" x="73" y="322" text-anchor="middle">Registry</text>
+            <text class="d-sub" x="73" y="338" text-anchor="middle">signed only</text>
+            <rect class="d-box" x="131" y="300" width="98" height="52" rx="8"/>
+            <text class="d-text" x="180" y="322" text-anchor="middle">Clusters</text>
+            <text class="d-sub" x="180" y="338" text-anchor="middle">internal apps</text>
+            <rect class="d-box" x="238" y="300" width="98" height="52" rx="8"/>
+            <text class="d-text" x="287" y="322" text-anchor="middle">Audit</text>
+            <text class="d-sub" x="287" y="338" text-anchor="middle">logs to SOC</text>
+            <text class="d-sub" x="180" y="380" text-anchor="middle">no internet route in or out</text>
+          </svg>
+          <figcaption>Software enters the enclave only after scanning and signing in a connected staging zone.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Compliance &amp; security controls</span><h2>From requirement to Kubernetes control</h2></div>
+      <div class="table-wrap">
+        <table aria-label="Public sector compliance requirements and how they are implemented on Kubernetes">
+          <thead><tr><th scope="col">Requirement</th><th scope="col">How we implement it on Kubernetes</th></tr></thead>
+          <tbody>
+            <tr><td>Processing personal data lawfully and securely under India's Digital Personal Data Protection (DPDP) Act</td><td>Reasonable security safeguards such as encryption, least-privilege access and audit logs; data minimisation in logs and traces; and documented retention and deletion for volumes and backups.</td></tr>
+            <tr><td>Data residency for government data</td><td>Clusters, storage, registries, backups and log stores restricted to in-country government data centres or empanelled cloud regions, enforced by policy.</td></tr>
+            <tr><td>Use of MeitY-empanelled cloud services where required</td><td>We design for the empanelled offerings you select and keep the Kubernetes layer portable between them and your own data centres.</td></tr>
+            <tr><td>CERT-In directions on cyber incident reporting and log retention</td><td>Centralised, time-synchronised logging with retention and location you control, and incident runbooks that include your reporting obligations.</td></tr>
+            <tr><td>Isolation of sensitive systems</td><td>Air-gapped enclaves, private registries, signed-image admission policies and a documented, controlled software transfer process.</td></tr>
+            <tr><td>Accessibility of citizen services (for example GIGW and WCAG)</td><td>The platform does not make a site accessible by itself; we support accessibility testing in CI pipelines and performance budgets so pages stay usable on low-end devices.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warn mt-4"><strong>Not legal advice.</strong> The DPDP Act, MeitY empanelment, CERT-In directions and accessibility guidelines are described in general terms only. Department legal, security and procurement teams should confirm the obligations that apply.</div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Infrastructure</span><h2>Recommended infrastructure types</h2></div>
+      <div class="grid grid-4">
+        <a class="card" href="infra-air-gapped.html"><h3>Air-gapped</h3><p class="muted">Fully disconnected clusters for classified or sensitive workloads.</p><span class="card-link">Learn more &rarr;</span></a>
+        <a class="card" href="infra-on-prem.html"><h3>On-premises</h3><p class="muted">Government-owned data centres under direct control.</p><span class="card-link">Learn more &rarr;</span></a>
+        <a class="card" href="infra-hybrid.html"><h3>Hybrid</h3><p class="muted">Public tier on empanelled cloud, sensitive tier on-premises.</p><span class="card-link">Learn more &rarr;</span></a>
+        <a class="card" href="infra-enterprise-platforms.html"><h3>OpenShift / Rancher / Tanzu</h3><p class="muted">Supported distributions with long lifecycle commitments.</p><span class="card-link">Learn more &rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Services</span><h2>Relevant services</h2></div>
+      <div class="grid grid-3">
+        <a class="card" href="services.html#assessment"><h3>Assessment &amp; strategy</h3><p class="muted">Architecture options and documentation that support procurement.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#build"><h3>Cluster build</h3><p class="muted">Sovereign and air-gapped clusters with offline installation.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#security"><h3>Security &amp; compliance</h3><p class="muted">Supply-chain controls, hardening and audit logging.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#reliability"><h3>Reliability</h3><p class="muted">Capacity planning and load tests for announcement days.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#training"><h3>Training</h3><p class="muted">Upskill department teams so knowledge stays in-house.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="support.html"><h3>24/7 support</h3><p class="muted">Including on-site or cleared-network support models.</p><span class="card-link">See plans &rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Sample roadmap</span><h2>A typical public-sector engagement</h2><p class="muted">Aligned to procurement milestones and security reviews.</p></div>
+      <div class="steps">
+        <div class="step"><h3>Assess</h3><p class="muted">Classify systems and data, confirm hosting options and security requirements.</p></div>
+        <div class="step"><h3>Design</h3><p class="muted">Document architecture, transfer process and control mapping for review.</p></div>
+        <div class="step"><h3>Build</h3><p class="muted">Install clusters, registries and policy offline where required, all as code.</p></div>
+        <div class="step"><h3>Accredit</h3><p class="muted">Support security audits, load tests and accessibility checks before go-live.</p></div>
+        <div class="step"><h3>Handover</h3><p class="muted">Train teams, deliver runbooks and provide ongoing support.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">FAQ</span><h2>Public-sector questions</h2></div>
+      <div class="faq">
+        <details><summary>Can Kubernetes run with no internet connection at all?</summary><div>Yes. Air-gapped clusters are installed from offline bundles, pull images from an internal registry and receive updates through a controlled transfer process. Monitoring, logging and GitOps all run inside the enclave.</div></details>
+        <details><summary>Do we have to use a MeitY-empanelled cloud?</summary><div>That depends on your department's policies and the nature of the workload. We can design for empanelled cloud offerings, your own data centres or a mix, and keep the platform portable between them.</div></details>
+        <details><summary>How does the DPDP Act affect our platform?</summary><div>The Act sets obligations for how personal data is collected, used, protected and erased. At the infrastructure level that means sound security safeguards, clear data retention and deletion, and the ability to investigate and report breaches. Your legal team should interpret the specific duties for your department.</div></details>
+        <details><summary>Will we be locked in to KubeSetu?</summary><div>No. We build on open-source components and open standards, keep everything in your repositories and hand over runbooks and training so your teams or another partner can operate the platform.</div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+</body>
+</html>

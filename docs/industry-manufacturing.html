@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kubernetes for Manufacturing &amp; Industry 4.0 | KubeSetu</title>
+  <meta name="description" content="Kubernetes for plants and industrial operators: factory edge clusters, OT/IT separation, operation through intermittent connectivity and reliable IoT data pipelines.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="industries.html">Industries</a> / Manufacturing</div>
+      <h1>Kubernetes for manufacturing &amp; Industry 4.0</h1>
+      <p class="lead">Vision inspection, predictive maintenance and MES integrations all want to run next to the line. We build factory-edge platforms that respect the boundary between operational and corporate networks, keep running when the WAN drops, and can be updated safely from a central team.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Challenges</span><h2>What makes factory platforms different</h2></div>
+      <div class="grid grid-3">
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/></svg></span>
+          <h3>OT and IT must stay apart</h3>
+          <p class="muted">Control systems cannot be exposed to corporate or internet traffic, yet their data is needed by analytics teams.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 2l20 20M8.5 16.5a5 5 0 0 1 7 0M5 13a10 10 0 0 1 5.2-2.8M19 13a10 10 0 0 0-2-1.5M12 20h.01"/></svg></span>
+          <h3>Intermittent connectivity</h3>
+          <p class="muted">Remote plants may have slow or unreliable links, so local workloads must keep running and catch up later.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V10l6 4v-4l6 4V5h4v16z"/><path d="M3 21h18"/></svg></span>
+          <h3>Harsh, unattended sites</h3>
+          <p class="muted">Industrial PCs and small servers sit on the shop floor with no on-site IT team to fix a failed upgrade.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span>
+          <h3>High-volume sensor data</h3>
+          <p class="muted">Machines produce a constant stream of telemetry that must be filtered locally and delivered without loss.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span>
+          <h3>Production windows</h3>
+          <p class="muted">Changes must fit planned shutdowns and shift patterns; an unplanned restart can stop a line.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg></span>
+          <h3>AI at the line</h3>
+          <p class="muted">Vision inspection models need GPUs or accelerators close to cameras, managed like any other workload.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="two-col">
+        <div>
+          <span class="eyebrow">Recommended architecture</span>
+          <h2>Edge clusters in an industrial DMZ, synced to a central hub</h2>
+          <p class="muted">Following a zoned model in the spirit of IEC 62443 and the Purdue reference model, OT devices stay in their own zone. A small Kubernetes cluster in the plant's industrial DMZ collects and processes data, and only outbound, brokered connections reach the cloud or corporate data centre.</p>
+          <ul class="check-list">
+            <li>Lightweight clusters (K3s, MicroShift or similar) on two or three nodes per plant for resilience.</li>
+            <li>Protocol gateways for OPC UA, Modbus and MQTT that read from OT without opening inbound paths.</li>
+            <li>Local message buffering (for example MQTT brokers or Kafka) so data survives link outages.</li>
+            <li>Pull-based GitOps: plant clusters fetch approved changes, nothing pushes into the plant.</li>
+            <li>Maintenance windows encoded in rollout policies, with automatic rollback on failed health checks.</li>
+            <li>GPU or accelerator nodes for vision inspection, scheduled and updated like other workloads.</li>
+          </ul>
+        </div>
+        <figure class="diagram" style="margin:0">
+          <svg viewBox="0 0 360 420" role="img" aria-label="Manufacturing reference architecture: PLCs, sensors and cameras in the OT zone feed protocol gateways in an industrial DMZ. An edge Kubernetes cluster there runs data collection, local buffering and vision inference. Outbound-only, brokered links connect to a central cloud or data centre hub for GitOps, analytics and a data lake." xmlns="http://www.w3.org/2000/svg">
+            <title>Manufacturing Kubernetes reference architecture</title>
+            <rect class="d-box" x="12" y="12" width="336" height="58" rx="8"/>
+            <text class="d-text" x="180" y="34" text-anchor="middle">OT zone: PLCs, sensors, cameras</text>
+            <text class="d-sub" x="180" y="52" text-anchor="middle">no inbound access from IT or internet</text>
+            <path class="d-line" d="M180 70V96M174 90L180 96L186 90"/>
+            <rect class="d-accent" x="12" y="96" width="336" height="58" rx="8"/>
+            <text class="d-text" x="180" y="118" text-anchor="middle">Protocol gateways</text>
+            <text class="d-sub" x="180" y="136" text-anchor="middle">OPC UA, Modbus, MQTT, read-only</text>
+            <path class="d-line" d="M180 154V180M174 174L180 180L186 174"/>
+            <rect class="d-brand" x="12" y="180" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="65.3" y="202" text-anchor="middle">Collect</text>
+            <text class="d-sub" x="65.3" y="218" text-anchor="middle">filter and</text>
+            <text class="d-sub" x="65.3" y="231" text-anchor="middle">enrich data</text>
+            <rect class="d-brand" x="126.7" y="180" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="180" y="202" text-anchor="middle">Buffer</text>
+            <text class="d-sub" x="180" y="218" text-anchor="middle">store and</text>
+            <text class="d-sub" x="180" y="231" text-anchor="middle">forward queue</text>
+            <rect class="d-brand" x="241.3" y="180" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="294.6" y="202" text-anchor="middle">Inference</text>
+            <text class="d-sub" x="294.6" y="218" text-anchor="middle">vision models</text>
+            <text class="d-sub" x="294.6" y="231" text-anchor="middle">on GPU</text>
+            <text class="d-sub" x="180" y="256" text-anchor="middle">Edge cluster in industrial DMZ</text>
+            <path class="d-line" d="M180 262V292M174 286L180 292L186 286"/>
+            <rect class="d-box" x="12" y="292" width="336" height="44" rx="8"/>
+            <text class="d-text" x="180" y="319" text-anchor="middle">Outbound-only, brokered link</text>
+            <path class="d-line" d="M180 336V354M174 348L180 354L186 348"/>
+            <rect class="d-box" x="12" y="354" width="106.7" height="54" rx="8"/>
+            <text class="d-text" x="65.3" y="376" text-anchor="middle">GitOps hub</text>
+            <text class="d-sub" x="65.3" y="393" text-anchor="middle">pull-based sync</text>
+            <rect class="d-box" x="126.7" y="354" width="106.7" height="54" rx="8"/>
+            <text class="d-text" x="180" y="376" text-anchor="middle">Analytics</text>
+            <text class="d-sub" x="180" y="393" text-anchor="middle">OEE, maintenance</text>
+            <rect class="d-box" x="241.3" y="354" width="106.7" height="54" rx="8"/>
+            <text class="d-text" x="294.6" y="376" text-anchor="middle">Data lake</text>
+            <text class="d-sub" x="294.6" y="393" text-anchor="middle">history, training</text>
+          </svg>
+          <figcaption>Data flows up and out; configuration is pulled in. Nothing outside the plant can initiate a connection to OT.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Compliance &amp; security controls</span><h2>From requirement to Kubernetes control</h2></div>
+      <div class="table-wrap">
+        <table aria-label="Manufacturing security requirements and how they are implemented on Kubernetes">
+          <thead><tr><th scope="col">Requirement</th><th scope="col">How we implement it on Kubernetes</th></tr></thead>
+          <tbody>
+            <tr><td>Zones and conduits between OT and IT (as described in IEC 62443)</td><td>Edge clusters placed in the industrial DMZ, default-deny network policies, read-only protocol gateways, and firewall rules that allow only brokered outbound traffic.</td></tr>
+            <tr><td>Least-privilege remote access for engineers and vendors</td><td>No inbound SSH or API exposure; access through an audited bastion or zero-trust tunnel with SSO, MFA and time-limited roles.</td></tr>
+            <tr><td>Secure, controlled software updates</td><td>Pull-based GitOps, signed images verified at admission, local registry mirrors, and rollouts restricted to approved maintenance windows.</td></tr>
+            <tr><td>Resilience when connectivity is lost</td><td>Local control plane on each plant cluster, store-and-forward queues, and workloads that do not depend on cloud services to keep running.</td></tr>
+            <tr><td>Information security management (for example ISO 27001)</td><td>Asset inventory of clusters and devices, documented change records in Git, and central logging of security events.</td></tr>
+            <tr><td>Device and node integrity</td><td>Immutable or minimal OS images, disk encryption, secure boot where hardware supports it, and certificate-based node enrolment.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warn mt-4"><strong>Not legal advice.</strong> IEC 62443, ISO 27001 and sector rules are referenced in general terms to explain design choices. Your OT security and compliance owners should confirm the requirements for each site.</div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Infrastructure</span><h2>Recommended infrastructure types</h2></div>
+      <div class="grid grid-3">
+        <a class="card" href="infra-edge.html"><h3>Edge &amp; IoT</h3><p class="muted">Small, resilient clusters on the factory floor or in the plant DMZ.</p><span class="card-link">Learn more &rarr;</span></a>
+        <a class="card" href="infra-on-prem.html"><h3>On-premises</h3><p class="muted">Plant or regional data centres for MES, historians and analytics.</p><span class="card-link">Learn more &rarr;</span></a>
+        <a class="card" href="infra-hybrid.html"><h3>Hybrid</h3><p class="muted">Central cloud hub for fleet management, data lake and model training.</p><span class="card-link">Learn more &rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Services</span><h2>Relevant services</h2></div>
+      <div class="grid grid-3">
+        <a class="card" href="services.html#build"><h3>Cluster build</h3><p class="muted">Edge cluster blueprints, hardware selection and zero-touch setup.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#gitops"><h3>GitOps &amp; CI/CD</h3><p class="muted">Pull-based fleet management with maintenance-window rollouts.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#security"><h3>Security &amp; compliance</h3><p class="muted">OT/IT zoning, hardened images and secure remote access.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#ai"><h3>GPU &amp; AI</h3><p class="muted">Vision inspection and model deployment at the edge.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#observability"><h3>Observability</h3><p class="muted">Fleet-wide health, buffered when links are down.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="support.html"><h3>24/7 support</h3><p class="muted">Remote support for plants running round-the-clock shifts.</p><span class="card-link">See plans &rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Sample roadmap</span><h2>A typical manufacturing engagement</h2><p class="muted">We start with one plant and one line, then templatise for the rest of the estate.</p></div>
+      <div class="steps">
+        <div class="step"><h3>Survey</h3><p class="muted">Map networks, OT assets, connectivity and the use cases each plant needs.</p></div>
+        <div class="step"><h3>Design</h3><p class="muted">Agree zones and conduits, hardware, data flows and update policy with OT owners.</p></div>
+        <div class="step"><h3>Pilot</h3><p class="muted">Deploy one plant cluster and one data pipeline; test link loss and recovery.</p></div>
+        <div class="step"><h3>Templatise</h3><p class="muted">Turn the pilot into a repeatable blueprint with zero-touch provisioning.</p></div>
+        <div class="step"><h3>Scale</h3><p class="muted">Roll out plant by plant and support the fleet from a central team.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">FAQ</span><h2>Manufacturing questions</h2></div>
+      <div class="faq">
+        <details><summary>Will Kubernetes run our PLC or safety logic?</summary><div>No. Real-time control and safety systems should stay on dedicated controllers. Kubernetes runs the surrounding software: data collection, analytics, vision inspection, dashboards and integrations.</div></details>
+        <details><summary>What happens when the plant loses its internet link?</summary><div>Each plant cluster has its own control plane and local queues, so workloads keep running and data is buffered. Once the link returns, data is forwarded and any pending configuration changes are pulled in.</div></details>
+        <details><summary>How small can a factory cluster be?</summary><div>A single industrial PC can run a lightweight distribution, though we usually recommend two or three nodes so one hardware failure does not stop the site.</div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+</body>
+</html>

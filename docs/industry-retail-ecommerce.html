@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kubernetes for Retail &amp; E-commerce | KubeSetu</title>
+  <meta name="description" content="Kubernetes for retailers and online marketplaces: autoscaling for seasonal peaks, in-store edge clusters, PCI DSS for checkout and low latency for shoppers everywhere.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="industries.html">Industries</a> / Retail &amp; e-commerce</div>
+      <h1>Kubernetes for retail &amp; e-commerce</h1>
+      <p class="lead">Your busiest hour of the year is also the worst time for an outage. We build platforms that scale up for sale days and festive seasons, scale back down afterwards, and keep stores trading even when the network does not cooperate.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Challenges</span><h2>What makes retail platforms different</h2></div>
+      <div class="grid grid-3">
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18M7 15l4-4 3 3 6-6"/></svg></span>
+          <h3>Extreme, predictable peaks</h3>
+          <p class="muted">Flash sales, festive seasons and campaign launches can multiply traffic within minutes, then drop away just as fast.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></svg></span>
+          <h3>Latency costs conversions</h3>
+          <p class="muted">Shoppers in different cities and countries expect fast search, product pages and checkout wherever they are.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="7" rx="2"/><rect x="3" y="13" width="18" height="7" rx="2"/><path d="M7 7.5h.01M7 16.5h.01"/></svg></span>
+          <h3>Hundreds of small sites</h3>
+          <p class="muted">Stores and warehouses run POS, inventory and camera workloads on small hardware with no IT staff on site.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span>
+          <h3>Card data in the mix</h3>
+          <p class="muted">Checkout and in-store payments bring PCI DSS obligations that should not spread to the whole catalogue platform.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M15 9h-4a2 2 0 0 0 0 4h2a2 2 0 0 1 0 4H9M12 6v2M12 16v2"/></svg></span>
+          <h3>Thin margins</h3>
+          <p class="muted">Capacity bought for the peak but kept all year erodes margin. Cost per order matters as much as uptime.</p>
+        </div>
+        <div class="card">
+          <span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></span>
+          <h3>Fast release cycles</h3>
+          <p class="muted">Merchandising and growth teams ship often, so releases must be safe, reversible and frozen cleanly during peak events.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="two-col">
+        <div>
+          <span class="eyebrow">Recommended architecture</span>
+          <h2>Elastic cloud core with a fleet of store-edge clusters</h2>
+          <p class="muted">Customer-facing services run on managed Kubernetes in one or more regions behind a CDN. Stores and warehouses run lightweight clusters managed centrally through GitOps.</p>
+          <ul class="check-list">
+            <li>Horizontal pod autoscaling on request rate or queue depth, plus Karpenter or Cluster Autoscaler for nodes.</li>
+            <li>Pre-scaling schedules and load tests ahead of known sale events.</li>
+            <li>A CDN and regional clusters or read replicas to keep latency low for distant shoppers.</li>
+            <li>A separate, tightly scoped payment zone to limit PCI DSS scope.</li>
+            <li>K3s or a similar lightweight distribution in stores, with local caching so tills keep working offline.</li>
+            <li>Fleet-wide GitOps so one change can roll out to every store in controlled waves.</li>
+          </ul>
+        </div>
+        <figure class="diagram" style="margin:0">
+          <svg viewBox="0 0 360 420" role="img" aria-label="Retail reference architecture: shoppers reach a CDN and global load balancer, which route to regional managed Kubernetes clusters running storefront, search and an isolated checkout zone with autoscaling. A GitOps fleet manager syncs configuration to store and warehouse edge clusters that run POS and inventory services and can operate offline." xmlns="http://www.w3.org/2000/svg">
+            <title>Retail and e-commerce Kubernetes reference architecture</title>
+            <rect class="d-box" x="12" y="12" width="336" height="58" rx="8"/>
+            <text class="d-text" x="180" y="34" text-anchor="middle">Shoppers on web and app</text>
+            <text class="d-sub" x="180" y="52" text-anchor="middle">CDN and global load balancing</text>
+            <path class="d-line" d="M180 70V96M174 90L180 96L186 90"/>
+            <rect class="d-brand" x="12" y="96" width="164" height="58" rx="8"/>
+            <text class="d-text" x="94" y="118" text-anchor="middle">Region A cluster</text>
+            <text class="d-sub" x="94" y="136" text-anchor="middle">managed Kubernetes</text>
+            <rect class="d-brand" x="184" y="96" width="164" height="58" rx="8"/>
+            <text class="d-text" x="266" y="118" text-anchor="middle">Region B cluster</text>
+            <text class="d-sub" x="266" y="136" text-anchor="middle">active or warm standby</text>
+            <path class="d-line" d="M180 154V180M174 174L180 180L186 174"/>
+            <rect class="d-box" x="12" y="180" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="65.3" y="202" text-anchor="middle">Storefront</text>
+            <text class="d-sub" x="65.3" y="218" text-anchor="middle">catalogue,</text>
+            <text class="d-sub" x="65.3" y="231" text-anchor="middle">search, cart</text>
+            <rect class="d-accent" x="126.7" y="180" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="180" y="202" text-anchor="middle">Checkout</text>
+            <text class="d-sub" x="180" y="218" text-anchor="middle">PCI zone,</text>
+            <text class="d-sub" x="180" y="231" text-anchor="middle">isolated nodes</text>
+            <rect class="d-box" x="241.3" y="180" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="294.6" y="202" text-anchor="middle">Autoscaling</text>
+            <text class="d-sub" x="294.6" y="218" text-anchor="middle">HPA, KEDA,</text>
+            <text class="d-sub" x="294.6" y="231" text-anchor="middle">Karpenter</text>
+            <path class="d-line" d="M180 238V264M174 258L180 264L186 258"/>
+            <rect class="d-brand" x="12" y="264" width="336" height="58" rx="8"/>
+            <text class="d-text" x="180" y="286" text-anchor="middle">GitOps fleet manager</text>
+            <text class="d-sub" x="180" y="304" text-anchor="middle">Argo CD or Fleet, staged rollouts</text>
+            <path class="d-line" d="M180 322V348M174 342L180 348L186 342"/>
+            <rect class="d-box" x="12" y="348" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="65.3" y="370" text-anchor="middle">Store 1</text>
+            <text class="d-sub" x="65.3" y="386" text-anchor="middle">POS, inventory</text>
+            <rect class="d-box" x="126.7" y="348" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="180" y="370" text-anchor="middle">Store N</text>
+            <text class="d-sub" x="180" y="386" text-anchor="middle">offline-capable</text>
+            <rect class="d-box" x="241.3" y="348" width="106.7" height="58" rx="8"/>
+            <text class="d-text" x="294.6" y="370" text-anchor="middle">Warehouse</text>
+            <text class="d-sub" x="294.6" y="386" text-anchor="middle">picking, scanners</text>
+          </svg>
+          <figcaption>Cloud clusters absorb online peaks; store and warehouse clusters are managed centrally but keep trading if the link drops.</figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Compliance &amp; security controls</span><h2>From requirement to Kubernetes control</h2></div>
+      <div class="table-wrap">
+        <table aria-label="Retail compliance requirements and how they are implemented on Kubernetes">
+          <thead><tr><th scope="col">Requirement</th><th scope="col">How we implement it on Kubernetes</th></tr></thead>
+          <tbody>
+            <tr><td>PCI DSS: protect cardholder data and limit the systems in scope</td><td>Checkout and payment services on dedicated nodes or clusters, default-deny network policies, tokenisation at the edge of the zone, and no card data in logs.</td></tr>
+            <tr><td>PCI DSS: secure configuration, patching and vulnerability management</td><td>CIS-benchmarked node images, regular scanning of images and nodes, and automated upgrade pipelines tested before peak freezes.</td></tr>
+            <tr><td>Logging and monitoring of access to payment systems</td><td>API audit logs, ingress logs and runtime detection (for example Falco) forwarded to a central SIEM.</td></tr>
+            <tr><td>Customer data privacy (for example India's DPDP Act or the EU GDPR)</td><td>Region pinning for personal data, field-level masking in logs and traces, and documented data retention for each service.</td></tr>
+            <tr><td>Security of remote store devices</td><td>Disk encryption, signed images, remote attestation where hardware allows, and certificate-based enrolment of each store cluster.</td></tr>
+            <tr><td>Availability during peak trading</td><td>Pod disruption budgets, multi-zone node pools, load-tested capacity plans and a change freeze enforced in GitOps.</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout warn mt-4"><strong>Not legal advice.</strong> PCI DSS and privacy laws are summarised in general terms. Your QSA, compliance team and counsel should confirm your scope and obligations.</div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Infrastructure</span><h2>Recommended infrastructure types</h2></div>
+      <div class="grid grid-3">
+        <a class="card" href="infra-managed-cloud.html"><h3>Managed cloud</h3><p class="muted">EKS, AKS or GKE for elastic online storefronts and APIs.</p><span class="card-link">Learn more &rarr;</span></a>
+        <a class="card" href="infra-edge.html"><h3>Edge &amp; IoT</h3><p class="muted">Lightweight clusters in stores, dark stores and warehouses.</p><span class="card-link">Learn more &rarr;</span></a>
+        <a class="card" href="infra-hybrid.html"><h3>Hybrid &amp; multi-cloud</h3><p class="muted">Multiple regions or providers for resilience and reach.</p><span class="card-link">Learn more &rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Services</span><h2>Relevant services</h2></div>
+      <div class="grid grid-3">
+        <a class="card" href="services.html#reliability"><h3>Reliability &amp; scaling</h3><p class="muted">Autoscaling design, load testing and peak-readiness reviews.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#finops"><h3>FinOps</h3><p class="muted">Right-sizing, spot capacity and cost per order visibility.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#gitops"><h3>GitOps &amp; CI/CD</h3><p class="muted">Progressive delivery and fleet rollouts to every store.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#security"><h3>Security &amp; compliance</h3><p class="muted">PCI DSS scoping, hardening and runtime detection.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="services.html#observability"><h3>Observability</h3><p class="muted">Business and technical metrics side by side during a sale.</p><span class="card-link">View service &rarr;</span></a>
+        <a class="card" href="support.html"><h3>24/7 support</h3><p class="muted">Engineers on standby through your biggest trading events.</p><span class="card-link">See plans &rarr;</span></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">Sample roadmap</span><h2>A typical retail engagement</h2><p class="muted">We plan around your trading calendar so major changes land well before peak season.</p></div>
+      <div class="steps">
+        <div class="step"><h3>Assess</h3><p class="muted">Review traffic history, peak events, store estate and payment flows.</p></div>
+        <div class="step"><h3>Design</h3><p class="muted">Agree region strategy, autoscaling model, PCI boundary and edge blueprint.</p></div>
+        <div class="step"><h3>Build</h3><p class="muted">Deliver cloud clusters, a pilot store cluster and GitOps fleet tooling.</p></div>
+        <div class="step"><h3>Rehearse</h3><p class="muted">Load test to beyond expected peak, run game days and fix what breaks.</p></div>
+        <div class="step"><h3>Scale out</h3><p class="muted">Roll out to stores in waves and provide 24/7 cover through peak events.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head"><span class="eyebrow">FAQ</span><h2>Retail questions</h2></div>
+      <div class="faq">
+        <details><summary>Can autoscaling alone handle a flash sale?</summary><div>Usually not on its own. New nodes take time to arrive, so we combine reactive autoscaling with scheduled pre-scaling, warm capacity buffers and load tests based on your expected peak.</div></details>
+        <details><summary>What happens to a store cluster if the internet goes down?</summary><div>Store workloads are designed to run locally, with local data caches and queued sync. When connectivity returns, data and configuration reconcile automatically through GitOps.</div></details>
+        <details><summary>How do we keep the whole platform out of PCI DSS scope?</summary><div>By isolating payment services on their own nodes or clusters, restricting network paths into that zone and using tokenisation so other services never handle card numbers. Your QSA makes the final scope decision.</div></details>
+        <details><summary>Can we use spot or preemptible instances?</summary><div>Yes, for stateless and batch workloads with proper disruption handling. We keep checkout and other critical paths on on-demand capacity.</div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+</body>
+</html>

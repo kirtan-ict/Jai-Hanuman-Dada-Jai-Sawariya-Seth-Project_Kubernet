@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GitOps with Argo CD: A Working Blueprint | KubeSetu</title>
+  <meta name="description" content="A working GitOps blueprint with Argo CD: repository layout, app-of-apps and ApplicationSets, environment promotion, secrets management and progressive delivery with Argo Rollouts.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "GitOps with Argo CD: a working blueprint",
+    "description": "A working GitOps blueprint with Argo CD: repository layout, app-of-apps and ApplicationSets, environment promotion, secrets management and progressive delivery with Argo Rollouts.",
+    "articleSection": "Operations",
+    "author": { "@type": "Organization", "name": "KubeSetu Engineering" },
+    "publisher": { "@type": "Organization", "name": "KubeSetu", "logo": { "@type": "ImageObject", "url": "assets/img/logo.svg" } },
+    "datePublished": "2026-11-28",
+    "dateModified": "2026-11-28",
+    "mainEntityOfPage": "blog-gitops-with-argocd.html",
+    "timeRequired": "PT10M"
+  }
+  </script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="blog.html">Blog</a> / GitOps with Argo CD</div>
+      <h1>GitOps with Argo CD: a working blueprint</h1>
+      <p class="lead">GitOps makes Git the single source of truth for what runs in your clusters, and lets a controller continuously make reality match it. Argo CD is one of the most widely adopted ways to do that. Here is a blueprint that scales from one cluster to many.</p>
+      <ul class="tag-list" aria-label="Article details">
+        <li class="tag">Operations</li>
+        <li class="tag">10 min read</li>
+        <li class="tag">By KubeSetu Engineering</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container sidebar-layout">
+      <article style="min-width:0; overflow-wrap:break-word">
+        <p>Without GitOps, the state of a cluster is the sum of every <code>kubectl apply</code>, Helm install and hotfix anyone has ever run. Nobody can say with confidence what is deployed, why, or how to rebuild it. GitOps replaces that with four principles: the desired state is <em>declarative</em>, it is <em>versioned and immutable</em> in Git, it is <em>pulled automatically</em> by an agent in or near the cluster, and it is <em>continuously reconciled</em>, so drift is detected and corrected.</p>
+        <p>Argo CD implements those principles with a controller that compares Git with the live cluster, a UI and CLI for visibility, and building blocks for managing many applications and clusters. The tool is the easy part; most of the design work is in how you structure repositories and promotions.</p>
+
+        <h2 id="repos">Repository layout</h2>
+        <p>Keep application source code and deployment configuration in separate repositories. CI builds and tests code, publishes an image, then updates the configuration repository with the new image reference. Argo CD watches only the configuration repository. This separation means a configuration change never triggers a code build, and access to production configuration can be controlled independently.</p>
+        <p>A layout that works well for a platform team managing shared add-ons alongside team applications:</p>
+<pre><code>gitops/
+├── bootstrap/
+│   └── root-app.yaml            # the one Application you apply by hand
+├── platform/                    # cluster add-ons owned by the platform team
+│   ├── cert-manager/
+│   ├── ingress-nginx/
+│   └── external-secrets/
+├── apps/                        # one directory per application
+│   ├── checkout/
+│   │   ├── base/                # shared manifests (Kustomize base)
+│   │   └── overlays/
+│   │       ├── dev/
+│   │       ├── staging/
+│   │       └── prod/
+│   └── search/
+│       ├── base/
+│       └── overlays/
+└── appsets/
+    ├── platform.yaml            # ApplicationSet for add-ons
+    └── apps-prod.yaml           # ApplicationSet for production apps</code></pre>
+        <p>Kustomize overlays and Helm values files both work well for environment differences. Choose one convention and stick to it; mixing styles per application makes reviews harder.</p>
+        <div class="callout">
+          <strong>Prefer directories over branches for environments.</strong> Using a long-lived Git branch per environment sounds tidy but leads to painful merges and drift between branches. A directory per environment on a single main branch makes differences explicit and reviewable in one pull request.
+        </div>
+
+        <h2 id="applications">Applications and sync policy</h2>
+        <p>The core Argo CD resource is the <code>Application</code>: a source (a repository, revision and path) mapped to a destination (a cluster and namespace), plus a sync policy.</p>
+<pre><code>apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: checkout-prod
+  namespace: argocd
+spec:
+  project: shop
+  source:
+    repoURL: https://git.example.com/platform/gitops.git
+    targetRevision: main
+    path: apps/checkout/overlays/prod
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: checkout
+  syncPolicy:
+    automated:
+      prune: true       # delete resources that were removed from Git
+      selfHeal: true    # revert manual changes made in the cluster
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 10s
+        factor: 2
+        maxDuration: 3m</code></pre>
+        <p>Automated sync with <code>selfHeal</code> is what makes Git authoritative: if someone edits a Deployment by hand, Argo CD puts it back. Turn it on early for non-production environments. Some teams keep manual sync for production at first, then switch to automated once they trust their pipeline.</p>
+        <p>Group Applications into <strong>AppProjects</strong> to restrict which repositories, clusters, namespaces and resource kinds each team may deploy. Projects are the main multi-tenancy boundary in Argo CD, and they work together with Argo CD's own RBAC and single sign-on.</p>
+
+        <h2 id="app-of-apps">App-of-apps and ApplicationSets</h2>
+        <p>Writing one Application by hand per service per environment does not scale. Two patterns solve this.</p>
+        <h3>App-of-apps</h3>
+        <p>A single "root" Application points at a directory that contains other Application manifests. You apply the root once; Argo CD creates and manages everything beneath it. This is a simple and effective way to bootstrap a cluster.</p>
+<pre><code>apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: root
+  namespace: argocd
+spec:
+  project: default
+  source:
+    repoURL: https://git.example.com/platform/gitops.git
+    targetRevision: main
+    path: appsets
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true</code></pre>
+        <h3>ApplicationSets</h3>
+        <p>An ApplicationSet generates Applications from a template and one or more <em>generators</em>. A Git directory generator creates one Application per matching directory; a cluster generator creates one per registered cluster; list and matrix generators combine dimensions. Adding a new application becomes as simple as adding a directory.</p>
+<pre><code>apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: apps-prod
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - git:
+        repoURL: https://git.example.com/platform/gitops.git
+        revision: main
+        directories:
+          - path: apps/*/overlays/prod
+  template:
+    metadata:
+      name: '{{index .path.segments 1}}-prod'
+    spec:
+      project: shop
+      source:
+        repoURL: https://git.example.com/platform/gitops.git
+        targetRevision: main
+        path: '{{.path.path}}'
+      destination:
+        server: https://kubernetes.default.svc
+        namespace: '{{index .path.segments 1}}'
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
+        syncOptions:
+          - CreateNamespace=true</code></pre>
+        <p>Here <code>.path.segments</code> splits the matched path, so <code>apps/checkout/overlays/prod</code> produces an Application called <code>checkout-prod</code> deploying into the <code>checkout</code> namespace. Generator features evolve between releases, so check the Argo CD documentation for the version you run.</p>
+
+        <h2 id="environments">Environments and promotion</h2>
+        <p>Promotion in GitOps is a Git change. A typical flow looks like this:</p>
+        <ol>
+          <li>CI builds an image, tags it immutably (for example with the commit SHA) and pushes it.</li>
+          <li>CI, or an image updater, opens or merges a change that sets the new tag in the <code>dev</code> overlay. Argo CD syncs it.</li>
+          <li>After automated tests pass, a pull request copies the same tag to <code>staging</code>.</li>
+          <li>After approval, a pull request promotes it to <code>prod</code>. The pull request is your change record and audit trail.</li>
+        </ol>
+<pre><code># apps/checkout/overlays/prod/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - ../../base
+images:
+  - name: registry.example.com/shop/checkout
+    newTag: 3f9c2e1     # promoted from staging by pull request
+patches:
+  - path: replicas.yaml</code></pre>
+        <p>Keep environment overlays as thin as possible: replica counts, resource sizes, hostnames and feature flags. The more an environment differs from production, the less your testing there tells you.</p>
+
+        <h2 id="secrets">Secrets without plain text in Git</h2>
+        <p>Git history is forever, so secrets must never be committed in plain text. Three patterns are common:</p>
+        <ul>
+          <li><strong>External Secrets Operator:</strong> commit an <code>ExternalSecret</code> that references a key in a cloud secret manager or Vault. The operator creates the Kubernetes Secret in the cluster. Nothing sensitive touches Git.</li>
+          <li><strong>Sealed Secrets:</strong> encrypt a Secret with a public key; only the controller in the target cluster can decrypt it.</li>
+          <li><strong>SOPS:</strong> encrypt values in files with a KMS key or age, and decrypt during rendering through a plugin.</li>
+        </ul>
+<pre><code># Check the API version served by your External Secrets Operator release
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: checkout-db
+  namespace: checkout
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: cloud-secrets
+  target:
+    name: checkout-db         # the Kubernetes Secret that will be created
+  data:
+    - secretKey: password
+      remoteRef:
+        key: prod/checkout/db
+        property: password</code></pre>
+        <p>The external-manager approach is usually the easiest to operate at scale, because rotation happens in one place and audit logs live with the secret store. See our <a href="blog-kubernetes-security-checklist.html">security checklist</a> for the wider secrets picture.</p>
+
+        <h2 id="progressive">Progressive delivery</h2>
+        <p>Argo CD deploys whatever Git says, immediately. To release gradually and roll back automatically on bad metrics, add Argo Rollouts. A <code>Rollout</code> replaces a Deployment and adds canary or blue/green strategies, optionally driven by analysis against Prometheus or other metric providers.</p>
+<pre><code>apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: checkout
+  namespace: checkout
+spec:
+  replicas: 6
+  selector:
+    matchLabels:
+      app: checkout
+  template:
+    metadata:
+      labels:
+        app: checkout
+    spec:
+      containers:
+        - name: checkout
+          image: registry.example.com/shop/checkout:3f9c2e1
+          ports:
+            - containerPort: 8080
+  strategy:
+    canary:
+      steps:
+        - setWeight: 10
+        - pause: {duration: 5m}
+        - analysis:
+            templates:
+              - templateName: success-rate
+        - setWeight: 50
+        - pause: {duration: 10m}
+        - setWeight: 100</code></pre>
+        <p>Without a traffic router, the canary weight is approximated by the ratio of new to old pods. With an ingress controller, Gateway API implementation or service mesh integration, Rollouts can shift precise percentages of traffic. If the referenced <code>AnalysisTemplate</code> detects an elevated error rate, the rollout aborts and returns to the stable version.</p>
+        <div class="callout warn">
+          <strong>Git and the cluster must agree after a rollback.</strong> An aborted rollout restores the stable version in the cluster, but Git still points at the bad image. Revert the change in Git too, otherwise the next sync or a fresh cluster will try the broken version again.
+        </div>
+
+        <h2 id="operating">Operating Argo CD</h2>
+        <ul>
+          <li>Manage Argo CD itself through GitOps, with its configuration in the same repository and a documented bootstrap procedure.</li>
+          <li>Decide between one Argo CD instance managing many clusters (simpler, central visibility) and one per cluster or region (smaller blast radius). Both are valid.</li>
+          <li>Use SSO for the UI and CLI, and map groups to AppProjects with least-privilege roles.</li>
+          <li>Alert on applications that are out of sync or degraded for longer than a threshold; Argo CD exposes Prometheus metrics for this.</li>
+          <li>Rehearse rebuilding a cluster from Git. It is the best proof that your GitOps setup is complete, and it turns disaster recovery and <a href="blog-kubernetes-upgrade-playbook.html">blue/green cluster upgrades</a> into routine operations.</li>
+        </ul>
+
+        <h2 id="takeaways">Key takeaways</h2>
+        <ul class="check-list">
+          <li>Separate application source from deployment configuration, and let Argo CD watch only configuration.</li>
+          <li>Use a directory per environment on one main branch rather than a branch per environment.</li>
+          <li>Enable automated sync with prune and self-heal so Git stays authoritative, and use AppProjects as tenancy boundaries.</li>
+          <li>Bootstrap with app-of-apps and scale with ApplicationSets and generators.</li>
+          <li>Promote by pull request with immutable image tags; the history is your audit trail.</li>
+          <li>Keep secrets out of Git with External Secrets, Sealed Secrets or SOPS.</li>
+          <li>Add Argo Rollouts for canaries with automated analysis, and revert Git when a rollout aborts.</li>
+        </ul>
+      </article>
+
+      <aside style="min-width:0" aria-label="Article navigation and help">
+        <div class="sticky">
+          <nav class="card" aria-label="Table of contents">
+            <h3>On this page</h3>
+            <ul class="mb-0">
+              <li><a href="#repos">Repository layout</a></li>
+              <li><a href="#applications">Applications and sync policy</a></li>
+              <li><a href="#app-of-apps">App-of-apps and ApplicationSets</a></li>
+              <li><a href="#environments">Environments and promotion</a></li>
+              <li><a href="#secrets">Secrets</a></li>
+              <li><a href="#progressive">Progressive delivery</a></li>
+              <li><a href="#operating">Operating Argo CD</a></li>
+              <li><a href="#takeaways">Key takeaways</a></li>
+            </ul>
+          </nav>
+          <div class="card mt-2">
+            <h3>Need help?</h3>
+            <p class="muted">We design GitOps repositories, roll out Argo CD and Argo Rollouts, and connect them to your CI pipelines.</p>
+            <div class="btn-row">
+              <a class="btn btn-primary btn-sm" href="services.html#gitops">GitOps &amp; CI/CD</a>
+              <a class="btn btn-outline btn-sm" href="services.html#platform">Platform engineering</a>
+              <a class="btn btn-outline btn-sm" href="assessment.html">Free assessment</a>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Keep reading</span>
+        <h2>Related articles</h2>
+      </div>
+      <div class="grid grid-3">
+        <a class="card" href="blog-kubernetes-upgrade-playbook.html">
+          <ul class="tag-list mt-0"><li class="tag">Operations</li></ul>
+          <h3 class="mt-2">The zero-downtime Kubernetes upgrade playbook</h3>
+          <p class="muted">Pre-checks, deprecated APIs, PodDisruptionBudgets, surge upgrades and rollback.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+        <a class="card" href="blog-kubernetes-security-checklist.html">
+          <ul class="tag-list mt-0"><li class="tag">Security</li></ul>
+          <h3 class="mt-2">A production Kubernetes security checklist</h3>
+          <p class="muted">RBAC, Pod Security, network policy, supply chain and runtime detection.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+        <a class="card" href="blog-vm-to-kubernetes-migration.html">
+          <ul class="tag-list mt-0"><li class="tag">Migration</li></ul>
+          <h3 class="mt-2">Migrating VM and legacy workloads to Kubernetes</h3>
+          <p class="muted">Assessment, the 6Rs, containerisation, stateful data and cutover.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+</body>
+</html>

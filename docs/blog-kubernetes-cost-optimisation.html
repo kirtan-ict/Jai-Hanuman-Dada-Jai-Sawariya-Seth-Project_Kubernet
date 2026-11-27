@@ -1,0 +1,388 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kubernetes Cost Optimisation Guide | KubeSetu</title>
+  <meta name="description" content="How to cut Kubernetes cost safely: rightsizing requests and limits, HPA, VPA, Cluster Autoscaler and Karpenter, spot capacity, bin packing, idle namespaces and cost visibility with OpenCost.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Cutting Kubernetes cost without cutting reliability",
+    "description": "How to cut Kubernetes cost safely: rightsizing requests and limits, HPA, VPA, Cluster Autoscaler and Karpenter, spot capacity, bin packing, idle namespaces and cost visibility with OpenCost.",
+    "articleSection": "Cost",
+    "author": { "@type": "Organization", "name": "KubeSetu Engineering" },
+    "publisher": { "@type": "Organization", "name": "KubeSetu", "logo": { "@type": "ImageObject", "url": "assets/img/logo.svg" } },
+    "datePublished": "2026-11-28",
+    "dateModified": "2026-11-28",
+    "mainEntityOfPage": "blog-kubernetes-cost-optimisation.html",
+    "timeRequired": "PT9M"
+  }
+  </script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="blog.html">Blog</a> / Kubernetes cost optimisation</div>
+      <h1>Cutting Kubernetes cost without cutting reliability</h1>
+      <p class="lead">Kubernetes makes it easy to request capacity and hard to see who is using it. Most savings come not from exotic tricks but from three habits: request what you need, scale with demand, and make cost visible to the people who create it.</p>
+      <ul class="tag-list" aria-label="Article details">
+        <li class="tag">Cost</li>
+        <li class="tag">9 min read</li>
+        <li class="tag">By KubeSetu Engineering</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container sidebar-layout">
+      <article style="min-width:0; overflow-wrap:break-word">
+        <p>The scheduler places pods based on their <em>requests</em>, not on what they actually use. If a pod requests two CPUs and uses a tenth of one, the node still reserves two CPUs for it, and the cluster autoscaler still buys nodes to fit that reservation. Across hundreds of workloads, that gap between requested and used capacity is usually the biggest line in the bill, and it is invisible unless you look for it.</p>
+        <p>This guide works from the pod outward: first rightsize individual workloads, then make them scale, then make the nodes underneath match, and finally build the visibility that keeps savings from eroding.</p>
+
+        <h2 id="measure">Measure before you cut</h2>
+        <p>Start by comparing requests with real usage. You need a metrics pipeline (metrics-server for a quick look, Prometheus or a managed equivalent for history). A week or two of data covering normal peaks is the minimum before changing anything.</p>
+<pre><code># Live usage per pod (requires metrics-server)
+kubectl top pods -A --sort-by=cpu
+
+# Requested vs allocatable capacity per node
+kubectl describe nodes | grep -A 8 "Allocated resources"</code></pre>
+        <p>With Prometheus, compare the 95th percentile of usage with requests per container. The PromQL below is a starting point; adjust label names to match your exporters.</p>
+<pre><code># CPU requested but unused, by namespace (cores)
+sum by (namespace) (kube_pod_container_resource_requests{resource="cpu"})
+-
+sum by (namespace) (rate(container_cpu_usage_seconds_total{container!=""}[5m]))</code></pre>
+
+        <h2 id="rightsizing">Rightsize requests and limits</h2>
+        <p>Requests determine scheduling and your bill; limits determine what happens under pressure. Set them deliberately:</p>
+        <ul>
+          <li><strong>CPU requests</strong> should track typical usage with modest headroom. CPU is compressible: a container that exceeds its request is simply throttled relative to others when the node is busy.</li>
+          <li><strong>CPU limits</strong> are optional and often counter-productive for latency-sensitive services, because they throttle even when the node has idle CPU. Many teams omit them and rely on accurate requests instead. Decide per workload.</li>
+          <li><strong>Memory requests</strong> should cover realistic peak usage. Memory is not compressible; a pod that exceeds its memory limit is killed.</li>
+          <li><strong>Memory limits</strong> are usually set equal to, or slightly above, the request to avoid noisy-neighbour surprises and node-level memory pressure.</li>
+        </ul>
+<pre><code>resources:
+  requests:
+    cpu: 250m
+    memory: 384Mi
+  limits:
+    memory: 512Mi    # no CPU limit: avoid throttling when the node has spare CPU</code></pre>
+        <p>Use namespace-level guardrails so that new workloads start with sensible defaults and teams cannot accidentally claim a whole node:</p>
+<pre><code>apiVersion: v1
+kind: LimitRange
+metadata:
+  name: defaults
+  namespace: catalogue
+spec:
+  limits:
+    - type: Container
+      defaultRequest:
+        cpu: 100m
+        memory: 128Mi
+      default:
+        memory: 256Mi
+---
+apiVersion: v1
+kind: ResourceQuota
+metadata:
+  name: team-quota
+  namespace: catalogue
+spec:
+  hard:
+    requests.cpu: "20"
+    requests.memory: 40Gi
+    limits.memory: 60Gi</code></pre>
+
+        <h2 id="pod-autoscaling">Scale pods with HPA and VPA</h2>
+        <p>The Horizontal Pod Autoscaler (HPA) changes the number of replicas based on observed metrics. It is the right tool for stateless services whose load varies through the day.</p>
+<pre><code>apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: search-api
+  namespace: catalogue
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: search-api
+  minReplicas: 2
+  maxReplicas: 20
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 70
+  behavior:
+    scaleDown:
+      stabilizationWindowSeconds: 300</code></pre>
+        <p>CPU utilisation in an HPA is calculated relative to the pod's <em>request</em>, so rightsizing and horizontal scaling go hand in hand. For queue workers and event-driven jobs, KEDA can scale on queue depth or other external signals, including to zero.</p>
+        <p>The Vertical Pod Autoscaler (VPA) recommends, and optionally applies, better requests based on observed usage. Running it in recommendation-only mode is a low-risk way to get rightsizing suggestions for every workload:</p>
+<pre><code>apiVersion: autoscaling.k8s.io/v1
+kind: VerticalPodAutoscaler
+metadata:
+  name: search-api
+  namespace: catalogue
+spec:
+  targetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: search-api
+  updatePolicy:
+    updateMode: "Off"   # recommend only; read with: kubectl describe vpa search-api -n catalogue</code></pre>
+        <div class="callout warn">
+          <strong>Do not let HPA and VPA fight.</strong> If both act on the same resource metric (for example CPU) for the same workload, they will work against each other. A common pattern is HPA on CPU or a custom metric, with VPA in recommendation mode feeding periodic manual or automated request updates.
+        </div>
+
+        <h2 id="node-autoscaling">Scale nodes: Cluster Autoscaler or Karpenter</h2>
+        <p>Pod autoscaling only saves money if nodes follow. Two approaches dominate:</p>
+        <ul>
+          <li><strong>Cluster Autoscaler</strong> adds nodes to predefined node groups when pods are pending and removes underutilised nodes. It works on every major cloud and is well understood, but it is limited to the instance shapes you defined in each group.</li>
+          <li><strong>Karpenter</strong> provisions nodes directly from pending pod requirements, choosing from a wide range of instance types, and continually <em>consolidates</em> workloads onto fewer or cheaper nodes. It originated on AWS and has providers for other platforms, including Azure.</li>
+        </ul>
+        <p>A Karpenter NodePool that allows both spot and on-demand capacity across architectures, with consolidation enabled, looks roughly like this. API versions and fields have changed across releases, so check the documentation for the version you install.</p>
+<pre><code>apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: general
+spec:
+  template:
+    spec:
+      requirements:
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot", "on-demand"]
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64", "arm64"]
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: default
+  disruption:
+    consolidationPolicy: WhenEmptyOrUnderutilized
+    consolidateAfter: 1m
+  limits:
+    cpu: "200"</code></pre>
+        <p>Whichever you choose, set a hard upper limit on cluster size. Autoscalers will happily follow a runaway deployment all the way to your quota.</p>
+
+        <h2 id="spot">Use spot capacity safely</h2>
+        <p>Spot (or preemptible) instances are spare cloud capacity sold at a discount, with the catch that the provider can reclaim them at short notice. They suit stateless services with several replicas, batch jobs and CI runners. They do not suit single-replica databases.</p>
+        <ul>
+          <li>Diversify across many instance types and zones so a single capacity shortage does not take out a whole tier.</li>
+          <li>Handle interruption notices: Karpenter and the cloud providers' node termination handlers can cordon and drain nodes before they disappear.</li>
+          <li>Keep a baseline on on-demand capacity for critical services, and use node affinity or taints to steer workloads.</li>
+          <li>Make sure PodDisruptionBudgets and graceful shutdown are in place, exactly as for <a href="blog-kubernetes-upgrade-playbook.html">upgrades</a>.</li>
+        </ul>
+
+        <h2 id="bin-packing">Bin packing and idle resources</h2>
+        <p>Once requests are honest, nodes can be packed more densely. A few levers help:</p>
+        <ul>
+          <li><strong>Fewer, larger node shapes</strong> reduce per-node overhead (system daemons, kubelet reservations) as a proportion of capacity, although very large nodes increase the blast radius of a node failure.</li>
+          <li><strong>Consolidation</strong> by Karpenter, or a lower scale-down utilisation threshold for Cluster Autoscaler, moves pods off underused nodes.</li>
+          <li><strong>Scheduler scoring</strong> on self-managed clusters can favour packing (a "most allocated" strategy) over spreading; managed services expose this to varying degrees.</li>
+          <li><strong>Arm-based instances</strong> often offer better price-performance if your images are built for multiple architectures.</li>
+        </ul>
+        <p>Then hunt for capacity nobody is using:</p>
+        <ul>
+          <li>Development and preview namespaces that run around the clock. Scale them to zero out of hours with a scheduled job or a tool such as kube-downscaler.</li>
+          <li>Orphaned PersistentVolumes and snapshots left behind after workloads were deleted.</li>
+          <li>Load balancers created by forgotten Services of type <code>LoadBalancer</code>.</li>
+          <li>Over-provisioned logging: high-volume debug logs shipped and stored at production retention.</li>
+        </ul>
+<pre><code># Volumes not bound to any claim
+kubectl get pv | grep -E "Released|Available"
+
+# Every Service that provisions a cloud load balancer
+kubectl get svc -A | awk 'NR==1 || $3=="LoadBalancer"'
+
+# Scale a non-production namespace's deployments to zero for the night
+kubectl scale deployment --all --replicas=0 -n preview-feature-123</code></pre>
+
+        <h2 id="visibility">Cost visibility with OpenCost</h2>
+        <p>Savings erode when nobody can see what their workloads cost. OpenCost, a CNCF project, allocates cluster cost to namespaces, deployments, labels and pods using cloud pricing data or custom rates for on-premises hardware. It exposes the results through an API, a UI and Prometheus metrics.</p>
+        <ul>
+          <li>Label every workload with owner, team and cost centre, and enforce those labels with admission policy.</li>
+          <li>Publish a weekly cost report per team; even simple visibility changes behaviour.</li>
+          <li>Show idle cost (capacity paid for but not requested) separately, so platform teams own it explicitly.</li>
+          <li>Feed cost into the same dashboards as reliability, so trade-offs are visible together.</li>
+        </ul>
+        <div class="callout">
+          <strong>Make it a practice, not a project.</strong> One-off clean-ups decay within months. A regular review of rightsizing recommendations, idle resources and unit cost per service keeps the gains. Our <a href="cost-estimator.html">cost estimator</a> is a useful starting point for planning.
+        </div>
+
+        <h2 id="takeaways">Key takeaways</h2>
+        <ul class="check-list">
+          <li>The gap between requested and used resources is usually the largest source of waste; measure it first.</li>
+          <li>Set memory requests and limits carefully, and consider dropping CPU limits for latency-sensitive services.</li>
+          <li>Use HPA for variable load and VPA in recommendation mode for rightsizing, without letting them fight over the same metric.</li>
+          <li>Let a node autoscaler such as Cluster Autoscaler or Karpenter follow demand, with consolidation and a hard size cap.</li>
+          <li>Use diversified spot capacity for resilient, replicated workloads and handle interruptions gracefully.</li>
+          <li>Scale idle environments to zero and clean up orphaned volumes and load balancers.</li>
+          <li>Give every team visibility of its own cost with OpenCost and consistent labelling.</li>
+        </ul>
+      </article>
+
+      <aside style="min-width:0" aria-label="Article navigation and help">
+        <div class="sticky">
+          <nav class="card" aria-label="Table of contents">
+            <h3>On this page</h3>
+            <ul class="mb-0">
+              <li><a href="#measure">Measure before you cut</a></li>
+              <li><a href="#rightsizing">Rightsize requests and limits</a></li>
+              <li><a href="#pod-autoscaling">HPA and VPA</a></li>
+              <li><a href="#node-autoscaling">Cluster Autoscaler or Karpenter</a></li>
+              <li><a href="#spot">Spot capacity</a></li>
+              <li><a href="#bin-packing">Bin packing and idle resources</a></li>
+              <li><a href="#visibility">Visibility with OpenCost</a></li>
+              <li><a href="#takeaways">Key takeaways</a></li>
+            </ul>
+          </nav>
+          <div class="card mt-2">
+            <h3>Need help?</h3>
+            <p class="muted">We run FinOps reviews for Kubernetes and implement rightsizing, autoscaling and cost reporting.</p>
+            <div class="btn-row">
+              <a class="btn btn-primary btn-sm" href="services.html#finops">Kubernetes FinOps</a>
+              <a class="btn btn-outline btn-sm" href="cost-estimator.html">Cost estimator</a>
+              <a class="btn btn-outline btn-sm" href="assessment.html">Free assessment</a>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Keep reading</span>
+        <h2>Related articles</h2>
+      </div>
+      <div class="grid grid-3">
+        <a class="card" href="blog-eks-vs-aks-vs-gke.html">
+          <ul class="tag-list mt-0"><li class="tag">Architecture</li></ul>
+          <h3 class="mt-2">EKS vs AKS vs GKE</h3>
+          <p class="muted">How to choose a managed Kubernetes service for your organisation.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+        <a class="card" href="blog-kubernetes-upgrade-playbook.html">
+          <ul class="tag-list mt-0"><li class="tag">Operations</li></ul>
+          <h3 class="mt-2">The zero-downtime Kubernetes upgrade playbook</h3>
+          <p class="muted">Pre-checks, deprecated APIs, PodDisruptionBudgets, surge upgrades and rollback.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+        <a class="card" href="blog-gitops-with-argocd.html">
+          <ul class="tag-list mt-0"><li class="tag">Operations</li></ul>
+          <h3 class="mt-2">GitOps with Argo CD: a working blueprint</h3>
+          <p class="muted">Repo layout, ApplicationSets, environments, secrets and progressive delivery.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+</body>
+</html>

@@ -1,0 +1,331 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edge and IoT Kubernetes | KubeSetu</title>
+  <meta name="description" content="KubeSetu builds and supports edge Kubernetes fleets with k3s, k0s, MicroK8s and KubeEdge, including single-node clusters, offline operation, GitOps fleet management and OTA updates.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+<section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="infrastructure.html">Infrastructure</a> / Edge &amp; IoT</div>
+      <span class="eyebrow">Edge Kubernetes</span>
+      <h1>Hundreds of small clusters, managed like one</h1>
+      <p class="lead">Stores, factories, cell sites and vehicles need software close to where data is produced. We build lightweight clusters that keep working when the network drops, and a fleet layer that updates them all safely from one place.</p>
+      <ul class="tag-list" aria-label="Technologies covered">
+        <li class="tag">k3s</li><li class="tag">k0s</li><li class="tag">MicroK8s</li><li class="tag">KubeEdge</li><li class="tag">Rancher Fleet</li><li class="tag">Argo CD ApplicationSets</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col">
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="2"/><path d="M8.5 8.5a5 5 0 0 0 0 7M15.5 8.5a5 5 0 0 1 0 7M5.6 5.6a9 9 0 0 0 0 12.8M18.4 5.6a9 9 0 0 1 0 12.8"/></svg></div>
+        <h2 class="mt-0" style="font-size:1.4rem">When this fits</h2>
+        <ul class="check-list">
+          <li>Many locations each need local compute: point-of-sale, video analytics, machine control, network functions.</li>
+          <li>Connectivity is slow, expensive or intermittent, and sites must keep running offline.</li>
+          <li>Latency or bandwidth make sending all data to a central cloud impractical.</li>
+          <li>You want the same deployment model at the edge as in your central clusters.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="icon accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v4"/><path d="M12 17.5h.01"/></svg></div>
+        <h2 class="mt-0" style="font-size:1.4rem">When it doesn't</h2>
+        <ul>
+          <li>Each site runs one simple app that rarely changes; a plain container runtime or device-management tool may be enough.</li>
+          <li>Devices are microcontrollers or very small boards that cannot run a container runtime.</li>
+          <li>There are only one or two sites; a regular <a href="infra-on-prem.html">on-premises</a> cluster is simpler.</li>
+          <li>Nobody owns the central fleet tooling; edge without fleet management becomes unmanageable quickly.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container two-col">
+      <figure class="diagram" style="margin:0">
+        <svg viewBox="0 0 360 484" role="img" aria-labelledby="dg-edge-t dg-edge-d" xmlns="http://www.w3.org/2000/svg">
+<title id="dg-edge-t">Reference architecture for an edge Kubernetes fleet</title>
+<desc id="dg-edge-d">A central hub in the cloud or data centre holds a Git repository, a fleet manager such as Rancher Fleet or Argo CD ApplicationSets, a container registry and central observability. Sites connect over intermittent WAN links and pull their desired state. Each site runs a single-node or three-node k3s, k0s or MicroK8s cluster with a local registry cache and local buffering of telemetry, driving devices and sensors.</desc>
+<text class="d-sub" x="12" y="18">CENTRAL HUB (CLOUD OR DATA CENTRE)</text>
+<rect class="d-brand" x="12" y="24" width="106.7" height="58" rx="8"/>
+<text class="d-text" x="65.3" y="44" text-anchor="middle">Git repo</text>
+<text class="d-sub" x="65.3" y="60" text-anchor="middle">desired state</text>
+<rect class="d-brand" x="126.7" y="24" width="106.7" height="58" rx="8"/>
+<text class="d-text" x="180" y="44" text-anchor="middle">Fleet manager</text>
+<text class="d-sub" x="180" y="60" text-anchor="middle">Rancher Fleet</text>
+<text class="d-sub" x="180" y="74" text-anchor="middle">ApplicationSets</text>
+<rect class="d-brand" x="241.3" y="24" width="106.7" height="58" rx="8"/>
+<text class="d-text" x="294.6" y="44" text-anchor="middle">Registry</text>
+<text class="d-sub" x="294.6" y="60" text-anchor="middle">signed images</text>
+<path class="d-line" d="M180 84 V95 M175 90 L180 95 L185 90"/>
+<text class="d-sub" x="12" y="108">HUB SERVICES</text>
+<rect class="d-box" x="12" y="114" width="164" height="44" rx="8"/>
+<text class="d-text" x="94" y="134" text-anchor="middle">Observability</text>
+<text class="d-sub" x="94" y="150" text-anchor="middle">central metrics</text>
+<rect class="d-box" x="184" y="114" width="164" height="44" rx="8"/>
+<text class="d-text" x="266" y="134" text-anchor="middle">OTA pipeline</text>
+<text class="d-sub" x="266" y="150" text-anchor="middle">staged rollouts</text>
+<path class="d-line" d="M180 160 V171 M175 166 L180 171 L185 166"/>
+<text class="d-sub" x="12" y="184">WAN (INTERMITTENT, PULL-BASED)</text>
+<rect class="d-accent" x="12" y="190" width="164" height="44" rx="8"/>
+<text class="d-text" x="94" y="210" text-anchor="middle">Site agents pull</text>
+<text class="d-sub" x="94" y="226" text-anchor="middle">outbound only, retry</text>
+<rect class="d-accent" x="184" y="190" width="164" height="44" rx="8"/>
+<text class="d-text" x="266" y="210" text-anchor="middle">Store and forward</text>
+<text class="d-sub" x="266" y="226" text-anchor="middle">telemetry buffer</text>
+<path class="d-line" d="M180 236 V247 M175 242 L180 247 L185 242"/>
+<text class="d-sub" x="12" y="260">TYPICAL SITE</text>
+<rect class="d-box" x="12" y="266" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="65.3" y="286" text-anchor="middle">Store</text>
+<text class="d-sub" x="65.3" y="302" text-anchor="middle">1-node k3s</text>
+<rect class="d-box" x="126.7" y="266" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="180" y="286" text-anchor="middle">Factory</text>
+<text class="d-sub" x="180" y="302" text-anchor="middle">3-node k0s</text>
+<rect class="d-box" x="241.3" y="266" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="294.6" y="286" text-anchor="middle">Cell site</text>
+<text class="d-sub" x="294.6" y="302" text-anchor="middle">MicroK8s</text>
+<path class="d-line" d="M180 312 V323 M175 318 L180 323 L185 318"/>
+<text class="d-sub" x="12" y="336">ON EACH NODE</text>
+<rect class="d-box" x="12" y="342" width="106.7" height="58" rx="8"/>
+<text class="d-text" x="65.3" y="362" text-anchor="middle">Image cache</text>
+<text class="d-sub" x="65.3" y="378" text-anchor="middle">offline pulls</text>
+<rect class="d-box" x="126.7" y="342" width="106.7" height="58" rx="8"/>
+<text class="d-text" x="180" y="362" text-anchor="middle">Local apps</text>
+<text class="d-sub" x="180" y="378" text-anchor="middle">POS, vision</text>
+<text class="d-sub" x="180" y="392" text-anchor="middle">PLC gateway</text>
+<rect class="d-box" x="241.3" y="342" width="106.7" height="58" rx="8"/>
+<text class="d-text" x="294.6" y="362" text-anchor="middle">Local data</text>
+<text class="d-sub" x="294.6" y="378" text-anchor="middle">buffer + sync</text>
+<path class="d-line" d="M180 402 V413 M175 408 L180 413 L185 408"/>
+<text class="d-sub" x="12" y="426">DEVICES</text>
+<rect class="d-accent" x="12" y="432" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="65.3" y="452" text-anchor="middle">Cameras</text>
+<text class="d-sub" x="65.3" y="468" text-anchor="middle">sensors</text>
+<rect class="d-accent" x="126.7" y="432" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="180" y="452" text-anchor="middle">PLCs</text>
+<text class="d-sub" x="180" y="468" text-anchor="middle">machines</text>
+<rect class="d-accent" x="241.3" y="432" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="294.6" y="452" text-anchor="middle">KubeEdge</text>
+<text class="d-sub" x="294.6" y="468" text-anchor="middle">device twins</text>
+</svg>
+        <figcaption>Sites pull their configuration from the hub when a link is available and keep running on their last known good state when it is not.</figcaption>
+      </figure>
+      <div style="min-width:0">
+        <span class="eyebrow">Reference architecture</span>
+        <h2>Pull, cache and keep going</h2>
+        <p>Edge sites cannot rely on a central controller pushing changes. Each site runs a small agent that pulls its desired state from Git when the network is up, caches images locally, and carries on with the last good configuration when it is down.</p>
+        <ul class="check-list">
+          <li><strong>Outbound-only connections</strong> from sites, so no inbound firewall rules at hundreds of locations.</li>
+          <li><strong>Groups and waves</strong>: target sites by region, hardware or ring, and roll updates out gradually.</li>
+          <li><strong>Local resilience</strong>: registry mirrors, buffered telemetry and apps that tolerate a missing cloud.</li>
+          <li><strong>Zero-touch onboarding</strong>: a new box is plugged in and registers itself with the fleet.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col">
+      <div style="min-width:0">
+        <span class="eyebrow">Implementation</span>
+        <h2>What we implement</h2>
+        <ul class="check-list">
+          <li>Distribution selection by footprint and hardware: k3s, k0s, MicroK8s, or KubeEdge when you need cloud-to-device messaging.</li>
+          <li>Single-node and three-node HA site designs, including ARM and x86 hardware.</li>
+          <li>Golden OS images and zero-touch provisioning so a site boots straight into the fleet.</li>
+          <li>Fleet management with Rancher Fleet or Argo CD ApplicationSets, using cluster labels for targeting.</li>
+          <li>Over-the-air update pipelines with canary sites, staged waves and automatic rollback.</li>
+          <li>Local registry mirrors and pre-loaded images for low-bandwidth or offline sites.</li>
+          <li>Lightweight observability: local buffering with OpenTelemetry or Fluent Bit, forwarded when online.</li>
+          <li>Device and sensor integration for retail, manufacturing (OT networks, PLC gateways) and telecom edge sites.</li>
+        </ul>
+      </div>
+      <div style="min-width:0">
+        <span class="eyebrow">Stack</span>
+        <h2>Platforms and tooling</h2>
+        <ul class="tag-list" aria-label="Platforms and tooling">
+          <li class="tag">k3s</li><li class="tag">k0s</li><li class="tag">MicroK8s</li><li class="tag">KubeEdge</li><li class="tag">Rancher</li><li class="tag">Rancher Fleet</li><li class="tag">Argo CD ApplicationSets</li><li class="tag">Flux</li><li class="tag">system-upgrade-controller</li>
+          <li class="tag">Talos Linux</li><li class="tag">Ubuntu Core</li><li class="tag">SUSE Linux Micro</li><li class="tag">Harbor replication</li><li class="tag">Spegel</li><li class="tag">Fluent Bit</li><li class="tag">OpenTelemetry Collector</li><li class="tag">Prometheus agent mode</li><li class="tag">WireGuard / Tailscale</li>
+        </ul>
+        <div class="callout mt-4">
+          <strong>Typical use cases:</strong> in-store analytics and point-of-sale for retail, quality inspection and machine data in factories, and network functions at telecom cell sites and central offices.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Day-2 operations</span>
+        <h2>Day-2 support we provide</h2>
+        <p class="lead">At the edge, operations is mostly fleet operations. Our <a href="support.html">support plans</a> treat the fleet as the unit of work.</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></div><h3>Upgrades</h3><p>Kubernetes and OS upgrades rolled out in waves, starting with lab and canary sites, with automatic halt when health checks fail.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Patching</h3><p>Security patches packaged as image updates and delivered over the air, with clear reporting of which sites are still behind.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><h3>Monitoring</h3><p>Fleet-level dashboards: sites online, drift from desired state, last successful sync, disk wear and local resource pressure.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></div><h3>Backup and recovery</h3><p>Sites are rebuildable from Git and a golden image; local data is synchronised centrally where needed, so a failed box is swapped, not repaired.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V12"/><path d="M10 20V8"/><path d="M16 20V4"/><path d="M2 20h20"/></svg></div><h3>Scaling the fleet</h3><p>Onboarding new sites in batches, managing hardware generations side by side and keeping configuration manageable as site count grows.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v4"/><path d="M12 17.5h.01"/></svg></div><h3>Incident response</h3><p>Remote diagnosis over the management channel, fleet-wide rollback of a bad release, and clear instructions for on-site staff when hardware must be swapped.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col">
+      <div style="min-width:0">
+        <span class="eyebrow">Lessons learned</span>
+        <h2>Common pitfalls we prevent</h2>
+        <ul class="check-list">
+          <li><strong>Updating every site at once</strong> and bricking the fleet with one bad release.</li>
+          <li><strong>Images pulled over the WAN</strong> on every restart, saturating thin links.</li>
+          <li><strong>SD cards and consumer disks</strong> wearing out under container and log writes.</li>
+          <li><strong>Inbound access to each site</strong> instead of outbound, pull-based management.</li>
+          <li><strong>Clock drift and expired certificates</strong> on sites that were offline for weeks.</li>
+          <li><strong>Per-site snowflake configuration</strong> instead of labels and templates.</li>
+        </ul>
+      </div>
+      <div style="min-width:0">
+        <span class="eyebrow">Timeline</span>
+        <h2>A typical project</h2>
+        <div class="table-wrap">
+          <table>
+            <caption class="muted" style="caption-side:bottom;padding:10px 16px;text-align:left">Durations are typical ranges. Physical roll-out speed depends on how many sites you can visit or ship to.</caption>
+            <thead><tr><th scope="col">Phase</th><th scope="col">Duration</th><th scope="col">Deliverable</th></tr></thead>
+            <tbody>
+              <tr><td>Site and use-case analysis</td><td>1–2 weeks</td><td>Site profiles, hardware choice, connectivity model</td></tr>
+              <tr><td>Hub and fleet tooling</td><td>2–3 weeks</td><td>Central GitOps, registry, observability</td></tr>
+              <tr><td>Site image and onboarding</td><td>2–3 weeks</td><td>Golden image, zero-touch registration</td></tr>
+              <tr><td>Lab and pilot sites</td><td>2–4 weeks</td><td>Pilot sites live, offline and failure tests</td></tr>
+              <tr><td>Staged roll-out</td><td>Ongoing</td><td>Waves of sites, OTA pipeline in use</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container two-col">
+      <div style="min-width:0">
+        <span class="eyebrow">FAQ</span>
+        <h2>Edge questions</h2>
+        <p class="muted">Related services: <a href="services.html#gitops">GitOps and fleet delivery</a>, <a href="services.html#observability">observability</a>, <a href="services.html#platform">platform engineering</a>, and <a href="support.html">fleet support</a>.</p>
+      </div>
+      <div class="faq">
+        <details><summary>k3s, k0s or MicroK8s?</summary><div>All three are certified Kubernetes distributions with small footprints. k3s has a large ecosystem and pairs naturally with Rancher. k0s ships as a single binary with very few host dependencies. MicroK8s fits well on Ubuntu with snap-based updates. We choose based on your OS, hardware and fleet tooling.</div></details>
+        <details><summary>When do we need KubeEdge?</summary><div>When the edge nodes are constrained devices that should be managed from a central cluster, or when you need device twins and cloud-to-device messaging. If each site can run its own small cluster, independent clusters with fleet GitOps are usually simpler.</div></details>
+        <details><summary>What happens when a site is offline for days?</summary><div>It keeps running its last applied configuration from local images. When it reconnects, the agent pulls any pending changes and forwards buffered telemetry. We test these scenarios in the pilot phase.</div></details>
+        <details><summary>Is single-node Kubernetes acceptable in production?</summary><div>For many edge sites, yes. The cluster is a disposable unit rebuilt from Git, and the business process tolerates a short outage or has a manual fallback. Where it does not, we use three small nodes.</div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+</body>
+</html>

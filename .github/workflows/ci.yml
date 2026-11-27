@@ -1,0 +1,138 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE: ghcr.io/kirtan-ict/kubesetu-site
+  KUBECONFORM_VERSION: v0.6.7
+
+jobs:
+  links:
+    name: Check internal links
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Verify every local href/src in docs/*.html points to an existing file
+        shell: python
+        run: |
+          import pathlib, re, sys
+          docs = pathlib.Path("docs")
+          attr = re.compile(r'''(?:href|src)\s*=\s*["']([^"']+)["']''', re.I)
+          skip = ("http://", "https://", "//", "mailto:", "tel:", "data:", "javascript:", "#")
+          broken = []
+          pages = sorted(p for p in docs.glob("*.html") if not p.name.startswith("_"))
+          for page in pages:
+              text = page.read_text(encoding="utf-8")
+              for target in attr.findall(text):
+                  if target.startswith(skip):
+                      continue
+                  path = re.split(r"[?#]", target, 1)[0]
+                  if not path:
+                      continue
+                  resolved = docs / path.lstrip("/") if path.startswith("/") else page.parent / path
+                  if path.endswith("/"):
+                      resolved = resolved / "index.html"
+                  if not resolved.exists():
+                      broken.append(f"{page}: {target}")
+          print(f"Checked {len(pages)} pages.")
+          if broken:
+              print("Broken local links:")
+              print("\n".join(f"  - {b}" for b in broken))
+              sys.exit(1)
+          print("All local links resolve.")
+
+  manifests:
+    name: Validate Kubernetes manifests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install kubeconform
+        run: |
+          curl -sSfL "https://github.com/yannh/kubeconform/releases/download/${KUBECONFORM_VERSION}/kubeconform-linux-amd64.tar.gz" \
+            | tar -xz -C /usr/local/bin kubeconform
+          kubeconform -v
+
+      - name: Render and validate overlays
+        run: |
+          kubectl version --client
+          for overlay in k8s/overlays/*/; do
+            echo "::group::${overlay}"
+            kubectl kustomize "${overlay}" > rendered.yaml
+            kubeconform -strict -ignore-missing-schemas -summary rendered.yaml
+            echo "::endgroup::"
+          done
+
+  image:
+    name: Build (and push on main) container image
+    runs-on: ubuntu-latest
+    needs: [links, manifests]
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+          tags: |
+            type=sha,prefix=sha-
+            type=raw,value=latest,enable={{is_default_branch}}
+
+      - name: Build image for smoke test
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: kubesetu-site:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke test (read-only rootfs, non-root)
+        run: |
+          docker run -d --name site -p 8080:8080 --read-only \
+            --tmpfs /tmp --tmpfs /var/cache/nginx --cap-drop ALL \
+            --security-opt no-new-privileges kubesetu-site:ci
+          for i in $(seq 1 20); do curl -fsS http://localhost:8080/healthz && break; sleep 1; done
+          curl -fsS -o /dev/null http://localhost:8080/
+          curl -fsSI http://localhost:8080/ | grep -i "content-security-policy"
+          code=$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8080/does-not-exist)
+          test "$code" = "404"
+          docker exec site id -u | grep -qv '^0$'
+          docker logs site
+          docker rm -f site
+
+      - name: Log in to GHCR
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha

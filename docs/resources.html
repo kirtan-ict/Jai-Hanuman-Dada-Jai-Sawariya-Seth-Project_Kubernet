@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kubernetes Resources and Runbooks | KubeSetu</title>
+  <meta name="description" content="Practical Kubernetes resources from KubeSetu: version lifecycle and upgrade guidance, a production-readiness checklist, Day-2 runbook outlines with kubectl commands, when not to use Kubernetes, and a glossary.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+<section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / Resources</div>
+      <span class="eyebrow">Resource hub</span>
+      <h1>Practical Kubernetes guidance</h1>
+      <p class="lead">The checklists and runbook outlines we use with our own clients, written for engineers. Use them freely, adapt them to your environment, and test every command in a non-production cluster first.</p>
+      <div class="btn-row">
+        <a class="btn btn-primary" href="decision-guide.html">Platform decision guide</a>
+        <a class="btn btn-outline" href="cost-estimator.html">Cluster cost estimator</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container sidebar-layout">
+      <div style="min-width:0">
+
+        <section id="lifecycle" aria-labelledby="h-lifecycle">
+          <span class="eyebrow">Versions</span>
+          <h2 id="h-lifecycle">Kubernetes version lifecycle and upgrades</h2>
+          <p>The Kubernetes project ships a new minor release (1.x) roughly three times a year. Each minor release receives patch releases for about 14 months: roughly a year of standard support plus a short overlap period to upgrade. In practice that means a cluster left alone falls out of support in a little over a year, and upgrading becomes a routine, several-times-a-year task rather than a project.</p>
+          <div class="callout">
+            <strong>Check current versions at the source.</strong> Supported releases and end-of-life dates change with every release. Always confirm them on the official <a href="https://kubernetes.io/releases/" rel="noopener">kubernetes.io/releases</a> page and in your cloud provider's or vendor's own version calendar, which may differ from upstream and may offer paid extended support.
+          </div>
+          <h3>Upgrade guidance</h3>
+          <ul class="check-list">
+            <li><strong>One minor version at a time</strong> for the control plane. You cannot skip minor versions.</li>
+            <li><strong>Respect version skew</strong>: nodes may lag the control plane by a limited number of minor versions, but never run ahead of it. Check the skew policy for your version.</li>
+            <li><strong>Find deprecated APIs first</strong> using the API server's deprecated-API metrics or tools such as Pluto or kube-no-trouble, and fix manifests and Helm charts before upgrading.</li>
+            <li><strong>Upgrade add-ons deliberately</strong>: CNI, CSI drivers, ingress controllers, cert-manager and operators each have their own compatibility matrix.</li>
+            <li><strong>Back up before you start</strong>: an etcd snapshot (self-managed) and Velero backups of critical namespaces.</li>
+            <li><strong>Rehearse in a lower environment</strong> on the same version path, then upgrade production with surge capacity and PodDisruptionBudgets in place.</li>
+            <li><strong>Plan a regular cadence</strong>, for example one minor upgrade per quarter, so you never fall more than one or two versions behind.</li>
+          </ul>
+        </section>
+
+        <section id="readiness" class="mt-4" aria-labelledby="h-readiness">
+          <span class="eyebrow">Checklist</span>
+          <h2 id="h-readiness">Production-readiness checklist</h2>
+          <p>Expand each area. If you cannot tick most items, the cluster is a pilot, not production. Our <a href="assessment.html">free assessment</a> walks through a shorter version of this list.</p>
+          <div class="faq">
+            <details><summary>Cluster and control plane</summary><div>
+              <ul class="check-list">
+                <li>Highly available control plane (managed, or three members across failure domains).</li>
+                <li>Kubernetes version within the supported window, with an upgrade plan.</li>
+                <li>Separate node pools for system components and workloads.</li>
+                <li>Cluster built entirely from code (Terraform, Cluster API or equivalent).</li>
+                <li>Certificate expiry monitored, with rotation automated or scheduled.</li>
+              </ul></div></details>
+            <details><summary>Security and access</summary><div>
+              <ul class="check-list">
+                <li>SSO for humans, short-lived credentials, no shared admin kubeconfig.</li>
+                <li>RBAC with least privilege; cluster-admin limited to break-glass accounts.</li>
+                <li>Pod Security Standards (baseline or restricted) enforced per namespace.</li>
+                <li>Admission policy (Kyverno or Gatekeeper) for image sources, labels and resource limits.</li>
+                <li>Secrets encrypted at rest and sourced from a secrets manager.</li>
+                <li>Image scanning in CI and, ideally, signature verification at admission.</li>
+                <li>API server not openly exposed to the internet; audit logging enabled.</li>
+              </ul></div></details>
+            <details><summary>Networking</summary><div>
+              <ul class="check-list">
+                <li>IP ranges planned for growth and not overlapping other networks.</li>
+                <li>Default-deny NetworkPolicies with explicit allows between services.</li>
+                <li>Ingress or Gateway API with TLS everywhere and automated certificates.</li>
+                <li>DNS (CoreDNS) scaled and monitored; NodeLocal DNSCache where load is high.</li>
+              </ul></div></details>
+            <details><summary>Workloads</summary><div>
+              <ul class="check-list">
+                <li>CPU and memory requests on every container; memory limits set.</li>
+                <li>Liveness, readiness and, where slow to start, startup probes.</li>
+                <li>At least two replicas for stateless services, spread across zones or nodes.</li>
+                <li>PodDisruptionBudgets so upgrades and drains do not take services down.</li>
+                <li>Graceful shutdown handling (preStop hooks, termination grace periods).</li>
+              </ul></div></details>
+            <details><summary>Observability</summary><div>
+              <ul class="check-list">
+                <li>Metrics for cluster, nodes and applications with retention that fits your needs.</li>
+                <li>Centralised logs that survive pod and node loss.</li>
+                <li>Alerts on symptoms users feel, routed to an on-call rotation with runbooks.</li>
+                <li>Tracing for request paths that cross several services.</li>
+              </ul></div></details>
+            <details><summary>Backup and disaster recovery</summary><div>
+              <ul class="check-list">
+                <li>etcd snapshots (self-managed) stored off-cluster.</li>
+                <li>Velero or equivalent backups of resources and persistent volumes.</li>
+                <li>Documented recovery point and recovery time objectives.</li>
+                <li>A restore drill performed in the last quarter.</li>
+              </ul></div></details>
+            <details><summary>Delivery and change</summary><div>
+              <ul class="check-list">
+                <li>All changes delivered through CI/CD or GitOps, not manual <code>kubectl apply</code>.</li>
+                <li>Environments promoted through the same pipeline.</li>
+                <li>Rollback path tested for applications and platform components.</li>
+              </ul></div></details>
+            <details><summary>Cost</summary><div>
+              <ul class="check-list">
+                <li>Cost visibility per namespace or team (for example with OpenCost).</li>
+                <li>Autoscaling for pods and nodes; idle environments scaled down.</li>
+                <li>Requests reviewed regularly against actual usage.</li>
+              </ul></div></details>
+          </div>
+        </section>
+
+        <section id="runbooks" class="mt-4" aria-labelledby="h-runbooks">
+          <span class="eyebrow">Day-2 operations</span>
+          <h2 id="h-runbooks">Runbook outlines</h2>
+          <p>Short outlines of common recovery procedures. They assume a self-managed cluster where noted; managed services handle some steps for you. Replace values in angle brackets, and adapt paths to your distribution.</p>
+
+          <h3 class="mt-4">1. Node failure</h3>
+          <p>Symptoms: node <code>NotReady</code>, pods stuck <code>Terminating</code> or <code>Unknown</code>. Goal: move workloads safely, then repair or replace the node.</p>
+<pre><code># Identify the node and what runs on it
+kubectl get nodes -o wide
+kubectl describe node &lt;node&gt;
+kubectl get pods -A -o wide --field-selector spec.nodeName=&lt;node&gt;
+
+# Stop new scheduling, then evict workloads (respects PodDisruptionBudgets)
+kubectl cordon &lt;node&gt;
+kubectl drain &lt;node&gt; --ignore-daemonsets --delete-emptydir-data --timeout=10m
+
+# After repair: allow scheduling again
+kubectl uncordon &lt;node&gt;
+
+# If the machine is gone for good, remove the Node object
+kubectl delete node &lt;node&gt;</code></pre>
+          <p class="muted">Check whether stateful pods with attached volumes need the old volume attachment released before they can start elsewhere. With autoscaled node groups, replacing the instance is often faster than repairing it.</p>
+
+          <h3 class="mt-4">2. etcd snapshot and restore (self-managed)</h3>
+          <p>Use when the cluster state is corrupted or lost. Restoring etcd rolls the whole cluster back to the snapshot time, so treat it as a last resort and stop all API servers first.</p>
+<pre><code># Take a snapshot (kubeadm-style stacked etcd paths)
+ETCDCTL_API=3 etcdctl --endpoints=https://127.0.0.1:2379 \
+  --cacert=/etc/kubernetes/pki/etcd/ca.crt \
+  --cert=/etc/kubernetes/pki/etcd/server.crt \
+  --key=/etc/kubernetes/pki/etcd/server.key \
+  snapshot save /var/backups/etcd-snapshot.db
+
+# Verify the snapshot
+etcdutl snapshot status /var/backups/etcd-snapshot.db -w table
+
+# Restore on a control-plane node: stop static pods, restore to a new data dir
+mkdir -p /root/manifests-backup
+mv /etc/kubernetes/manifests/*.yaml /root/manifests-backup/
+etcdutl snapshot restore /var/backups/etcd-snapshot.db --data-dir /var/lib/etcd-restored
+# Point the etcd static pod's hostPath at /var/lib/etcd-restored, then:
+mv /root/manifests-backup/*.yaml /etc/kubernetes/manifests/
+kubectl get nodes
+kubectl get pods -n kube-system</code></pre>
+          <p class="muted">Multi-member clusters must be restored on every member with matching cluster settings. Distributions have their own helpers, for example RKE2's <code>--cluster-reset</code> with a restore path. Follow your distribution's documented procedure.</p>
+
+          <h3 class="mt-4">3. Certificate expiry</h3>
+          <p>Symptoms: <code>x509: certificate has expired</code> errors, kubectl and kubelets unable to reach the API. kubeadm-issued certificates last one year by default and are renewed during control-plane upgrades, so clusters that have not been upgraded in a year are at risk.</p>
+<pre><code># Check expiry dates (kubeadm clusters)
+kubeadm certs check-expiration
+
+# Renew all control-plane certificates on each control-plane node
+kubeadm certs renew all
+# Then restart the control-plane static pods (API server, controller manager,
+# scheduler, etcd), e.g. by moving their manifests out and back in
+
+# Refresh your admin kubeconfig
+cp /etc/kubernetes/admin.conf $HOME/.kube/config
+
+# Check a kubelet client certificate
+openssl x509 -noout -enddate -in /var/lib/kubelet/pki/kubelet-client-current.pem
+
+# For cert-manager-issued certificates
+kubectl get certificates -A
+kubectl describe certificate &lt;name&gt; -n &lt;namespace&gt;</code></pre>
+
+          <h3 class="mt-4">4. Failed upgrade rollback</h3>
+          <p>Kubernetes does not support downgrading the control plane in place. Your safety net is the backup taken before the upgrade, plus the ability to fix forward. For node pools and applications, rolling back is usually straightforward.</p>
+<pre><code># Assess: versions, API health and system pods
+kubectl version
+kubectl get nodes
+kubectl get --raw='/readyz?verbose'
+kubectl get pods -n kube-system
+
+# kubeadm: re-check the plan; a failed 'kubeadm upgrade apply' rolls back
+# automatically and keeps backups under /etc/kubernetes/tmp
+kubeadm upgrade plan
+
+# Find workloads broken by removed APIs
+kubectl get --raw /metrics | grep apiserver_requested_deprecated_apis
+
+# Roll back an application rollout
+kubectl rollout history deployment/&lt;name&gt; -n &lt;namespace&gt;
+kubectl rollout undo deployment/&lt;name&gt; -n &lt;namespace&gt;</code></pre>
+          <p class="muted">On managed services, a failed node-pool upgrade is typically handled by creating a fresh node pool on the previous supported version and draining the new one. If the control plane itself is unhealthy after upgrade, open a provider support case immediately. For self-managed clusters, restoring the pre-upgrade etcd snapshot onto the previous binaries is the last-resort rollback.</p>
+
+          <h3 class="mt-4">5. CrashLoopBackOff triage</h3>
+          <p>The container starts, exits and is restarted with increasing back-off. The cause is almost always in the previous container's logs, its exit code or its configuration.</p>
+<pre><code># What is failing, and how often
+kubectl get pods -n &lt;namespace&gt;
+kubectl describe pod &lt;pod&gt; -n &lt;namespace&gt;
+
+# Logs from the crashed (previous) container
+kubectl logs &lt;pod&gt; -n &lt;namespace&gt; --previous
+kubectl logs &lt;pod&gt; -n &lt;namespace&gt; -c &lt;container&gt; --previous
+
+# Exit code and reason (137 often means OOMKilled)
+kubectl get pod &lt;pod&gt; -n &lt;namespace&gt; \
+  -o jsonpath='{.status.containerStatuses[*].lastState.terminated}'
+
+# Recent events in the namespace
+kubectl get events -n &lt;namespace&gt; --sort-by=.lastTimestamp
+
+# Debug with an ephemeral container sharing the process namespace
+kubectl debug -it &lt;pod&gt; -n &lt;namespace&gt; --image=busybox:1.36 --target=&lt;container&gt;
+
+# If a recent change caused it, roll back
+kubectl rollout undo deployment/&lt;name&gt; -n &lt;namespace&gt;</code></pre>
+          <p class="muted">Common causes: missing ConfigMap or Secret keys, wrong command or arguments, failing liveness probes on slow starts, out-of-memory kills, and dependencies (databases, DNS) not reachable at start-up.</p>
+        </section>
+
+        <section id="not-kubernetes" class="mt-4" aria-labelledby="h-notk8s">
+          <span class="eyebrow">Honest advice</span>
+          <h2 id="h-notk8s">When NOT to use Kubernetes</h2>
+          <p>We build Kubernetes platforms for a living, and we still recommend against them fairly often. Kubernetes pays off when you have many services, many teams or demanding operational requirements. Below that line, its complexity can cost more than it saves.</p>
+          <div class="grid grid-2">
+            <div class="card"><h3>Consider something simpler if…</h3>
+              <ul>
+                <li>You run a handful of services that a PaaS, serverless platform or managed container service (such as Cloud Run, Azure Container Apps or ECS) can host.</li>
+                <li>Nobody on the team will own the cluster, and you do not plan to buy support.</li>
+                <li>The application is a monolith with steady traffic that runs well on a couple of VMs.</li>
+                <li>Your main problem is application architecture or delivery process; Kubernetes will not fix that.</li>
+              </ul>
+            </div>
+            <div class="card"><h3>Kubernetes usually earns its keep when…</h3>
+              <ul>
+                <li>Many services and teams need a common, self-service deployment platform.</li>
+                <li>You need portability across clouds, data centres or edge sites.</li>
+                <li>Workloads need autoscaling, self-healing and frequent, safe releases.</li>
+                <li>You run specialised workloads such as GPUs, batch jobs or stateful operators at scale.</li>
+              </ul>
+            </div>
+          </div>
+          <p class="mt-2">Unsure which side you are on? The <a href="decision-guide.html">decision guide</a> and a <a href="assessment.html">readiness assessment</a> will tell you, and we will say so if the answer is "not yet".</p>
+        </section>
+
+        <section id="glossary" class="mt-4" aria-labelledby="h-glossary">
+          <span class="eyebrow">Reference</span>
+          <h2 id="h-glossary">Glossary</h2>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th scope="col">Term</th><th scope="col">Meaning</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Control plane</th><td>The components that run the cluster: API server, scheduler, controller manager and etcd.</td></tr>
+                <tr><th scope="row">etcd</th><td>The consistent key-value store holding all cluster state. Losing it without a backup means losing the cluster's configuration.</td></tr>
+                <tr><th scope="row">Node</th><td>A machine (VM or server) that runs pods via the kubelet and a container runtime.</td></tr>
+                <tr><th scope="row">Pod</th><td>The smallest deployable unit: one or more containers sharing network and storage.</td></tr>
+                <tr><th scope="row">Deployment / StatefulSet / DaemonSet</th><td>Controllers for stateless replicas, stateful replicas with stable identity, and one pod per node respectively.</td></tr>
+                <tr><th scope="row">Service</th><td>A stable virtual IP and DNS name that load-balances to a set of pods.</td></tr>
+                <tr><th scope="row">Ingress / Gateway API</th><td>APIs for routing external HTTP(S) traffic into services. Gateway API is the newer, more expressive successor.</td></tr>
+                <tr><th scope="row">CNI</th><td>Container Network Interface: the plugin providing pod networking, such as Cilium or Calico.</td></tr>
+                <tr><th scope="row">CSI</th><td>Container Storage Interface: the plugin standard for attaching persistent storage.</td></tr>
+                <tr><th scope="row">CRD and Operator</th><td>Custom Resource Definitions extend the API; operators are controllers that manage software using them.</td></tr>
+                <tr><th scope="row">HPA</th><td>Horizontal Pod Autoscaler: adds or removes pod replicas based on metrics.</td></tr>
+                <tr><th scope="row">Cluster Autoscaler / Karpenter</th><td>Tools that add and remove nodes based on pending pods and utilisation.</td></tr>
+                <tr><th scope="row">PodDisruptionBudget</th><td>A limit on how many pods of an app may be voluntarily disrupted at once, protecting availability during drains and upgrades.</td></tr>
+                <tr><th scope="row">Taints and tolerations</th><td>A way to keep pods off certain nodes unless they explicitly tolerate them, for example GPU nodes.</td></tr>
+                <tr><th scope="row">RBAC</th><td>Role-Based Access Control: who can do what to which resources.</td></tr>
+                <tr><th scope="row">GitOps</th><td>Managing cluster state declaratively from Git, with an agent (Argo CD, Flux) reconciling changes.</td></tr>
+                <tr><th scope="row">Helm</th><td>A package manager for Kubernetes applications, using templated charts.</td></tr>
+                <tr><th scope="row">Service mesh</th><td>A layer (such as Istio or Linkerd) adding mTLS, traffic control and telemetry between services.</td></tr>
+                <tr><th scope="row">Day-2 operations</th><td>Everything after the initial build: upgrades, patching, monitoring, backups, scaling and incident response.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+
+      <aside class="sticky" aria-label="On this page">
+        <div class="card">
+          <h2 style="font-size:1.1rem">On this page</h2>
+          <ul style="list-style:none;padding:0;margin:0">
+            <li class="mt-0"><a href="#lifecycle">Version lifecycle and upgrades</a></li>
+            <li><a href="#readiness">Production-readiness checklist</a></li>
+            <li><a href="#runbooks">Day-2 runbook outlines</a></li>
+            <li><a href="#not-kubernetes">When NOT to use Kubernetes</a></li>
+            <li><a href="#glossary">Glossary</a></li>
+          </ul>
+          <hr style="border:0;border-top:1px solid var(--border);margin:16px 0">
+          <h3 style="font-size:1rem">Tools</h3>
+          <ul style="list-style:none;padding:0;margin:0">
+            <li><a href="cost-estimator.html">Cluster cost estimator</a></li>
+            <li><a href="decision-guide.html">Platform decision guide</a></li>
+            <li><a href="infrastructure.html">Compare infrastructure types</a></li>
+            <li><a href="support.html">Day-2 support plans</a></li>
+          </ul>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+</body>
+</html>

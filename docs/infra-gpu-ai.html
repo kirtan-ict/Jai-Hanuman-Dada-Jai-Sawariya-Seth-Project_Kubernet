@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>GPU and AI Kubernetes Infrastructure | KubeSetu</title>
+  <meta name="description" content="KubeSetu builds and supports GPU and AI platforms on Kubernetes with the NVIDIA GPU Operator, MIG and time-slicing, Kueue and Volcano scheduling, Kubeflow, KServe, Ray and vLLM serving, plus GPU cost control.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+<section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="infrastructure.html">Infrastructure</a> / GPU &amp; AI</div>
+      <span class="eyebrow">GPU and AI infrastructure</span>
+      <h1>Keep expensive GPUs busy and models online</h1>
+      <p class="lead">GPUs are the most expensive resource in most clusters and the easiest to waste. We build Kubernetes platforms that share accelerators fairly between training, fine-tuning and inference, serve models reliably, and show you exactly where the GPU hours go.</p>
+      <ul class="tag-list" aria-label="Technologies covered">
+        <li class="tag">NVIDIA GPU Operator</li><li class="tag">MIG</li><li class="tag">Time-slicing</li><li class="tag">Kueue</li><li class="tag">Volcano</li><li class="tag">Kubeflow</li><li class="tag">KServe</li><li class="tag">Ray</li><li class="tag">vLLM</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col">
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="7" width="20" height="10" rx="2"/><circle cx="8" cy="12" r="2"/><circle cx="16" cy="12" r="2"/><path d="M6 17v3M18 17v3"/></svg></div>
+        <h2 class="mt-0" style="font-size:1.4rem">When this fits</h2>
+        <ul class="check-list">
+          <li>Several teams compete for a limited pool of GPUs, in the cloud or on your own servers.</li>
+          <li>You serve open-weight or in-house models and need autoscaling, rollouts and observability.</li>
+          <li>Training and batch jobs need queueing, quotas and gang scheduling.</li>
+          <li>Data or models must stay in your environment rather than going to a hosted API.</li>
+          <li>GPU spend is significant and nobody can say how well it is used.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="icon accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v4"/><path d="M12 17.5h.01"/></svg></div>
+        <h2 class="mt-0" style="font-size:1.4rem">When it doesn't</h2>
+        <ul>
+          <li>You only call hosted model APIs and run no models yourself.</li>
+          <li>One data scientist runs occasional experiments; a single managed notebook or VM is cheaper and simpler.</li>
+          <li>Very large training runs that need specialised HPC scheduling and interconnects may be better on a dedicated HPC or managed training service.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container two-col">
+      <figure class="diagram" style="margin:0">
+        <svg viewBox="0 0 360 498" role="img" aria-labelledby="dg-gpu-t dg-gpu-d" xmlns="http://www.w3.org/2000/svg">
+<title id="dg-gpu-t">Reference architecture for a GPU and AI platform on Kubernetes</title>
+<desc id="dg-gpu-d">Users submit notebooks, training jobs and inference requests. A gateway routes inference traffic to KServe or vLLM model servers with autoscaling. Training and batch jobs go through Kueue or Volcano queues with quotas, running Kubeflow training operators or Ray clusters. GPU node pools are prepared by the NVIDIA GPU Operator with drivers, device plugin and DCGM monitoring, and GPUs are shared with MIG or time-slicing. Model weights and datasets come from object storage with a local cache, and a cost dashboard reports GPU utilisation per team.</desc>
+<text class="d-sub" x="12" y="18">USERS AND APPS</text>
+<rect class="d-accent" x="12" y="24" width="106.7" height="58" rx="8"/>
+<text class="d-text" x="65.3" y="44" text-anchor="middle">Notebooks</text>
+<text class="d-sub" x="65.3" y="60" text-anchor="middle">Jupyter</text>
+<text class="d-sub" x="65.3" y="74" text-anchor="middle">Kubeflow</text>
+<rect class="d-accent" x="126.7" y="24" width="106.7" height="58" rx="8"/>
+<text class="d-text" x="180" y="44" text-anchor="middle">Training jobs</text>
+<text class="d-sub" x="180" y="60" text-anchor="middle">pipelines</text>
+<rect class="d-accent" x="241.3" y="24" width="106.7" height="58" rx="8"/>
+<text class="d-text" x="294.6" y="44" text-anchor="middle">Inference API</text>
+<text class="d-sub" x="294.6" y="60" text-anchor="middle">apps, agents</text>
+<path class="d-line" d="M180 84 V95 M175 90 L180 95 L185 90"/>
+<text class="d-sub" x="12" y="108">SCHEDULING AND SERVING</text>
+<rect class="d-brand" x="12" y="114" width="164" height="58" rx="8"/>
+<text class="d-text" x="94" y="134" text-anchor="middle">Kueue / Volcano</text>
+<text class="d-sub" x="94" y="150" text-anchor="middle">queues, quotas</text>
+<text class="d-sub" x="94" y="164" text-anchor="middle">gang scheduling</text>
+<rect class="d-brand" x="184" y="114" width="164" height="58" rx="8"/>
+<text class="d-text" x="266" y="134" text-anchor="middle">KServe / vLLM</text>
+<text class="d-sub" x="266" y="150" text-anchor="middle">model servers</text>
+<text class="d-sub" x="266" y="164" text-anchor="middle">autoscaling</text>
+<path class="d-line" d="M180 174 V185 M175 180 L180 185 L185 180"/>
+<text class="d-sub" x="12" y="198">FRAMEWORKS</text>
+<rect class="d-box" x="12" y="204" width="106.7" height="58" rx="8"/>
+<text class="d-text" x="65.3" y="224" text-anchor="middle">Kubeflow</text>
+<text class="d-sub" x="65.3" y="240" text-anchor="middle">Trainer</text>
+<text class="d-sub" x="65.3" y="254" text-anchor="middle">Pipelines</text>
+<rect class="d-box" x="126.7" y="204" width="106.7" height="58" rx="8"/>
+<text class="d-text" x="180" y="224" text-anchor="middle">Ray</text>
+<text class="d-sub" x="180" y="240" text-anchor="middle">train, tune</text>
+<text class="d-sub" x="180" y="254" text-anchor="middle">serve</text>
+<rect class="d-box" x="241.3" y="204" width="106.7" height="58" rx="8"/>
+<text class="d-text" x="294.6" y="224" text-anchor="middle">Gateway</text>
+<text class="d-sub" x="294.6" y="240" text-anchor="middle">routing, limits</text>
+<path class="d-line" d="M180 264 V275 M175 270 L180 275 L185 270"/>
+<text class="d-sub" x="12" y="288">GPU NODE POOLS</text>
+<rect class="d-box" x="12" y="294" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="65.3" y="314" text-anchor="middle">Training pool</text>
+<text class="d-sub" x="65.3" y="330" text-anchor="middle">full GPUs</text>
+<rect class="d-box" x="126.7" y="294" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="180" y="314" text-anchor="middle">Serving pool</text>
+<text class="d-sub" x="180" y="330" text-anchor="middle">MIG slices</text>
+<rect class="d-box" x="241.3" y="294" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="294.6" y="314" text-anchor="middle">Dev pool</text>
+<text class="d-sub" x="294.6" y="330" text-anchor="middle">time-sliced</text>
+<path class="d-line" d="M180 340 V351 M175 346 L180 351 L185 346"/>
+<text class="d-sub" x="12" y="364">NVIDIA GPU OPERATOR</text>
+<rect class="d-brand" x="12" y="370" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="65.3" y="390" text-anchor="middle">Drivers</text>
+<text class="d-sub" x="65.3" y="406" text-anchor="middle">toolkit, runtime</text>
+<rect class="d-brand" x="126.7" y="370" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="180" y="390" text-anchor="middle">Device plugin</text>
+<text class="d-sub" x="180" y="406" text-anchor="middle">GPU resources</text>
+<rect class="d-brand" x="241.3" y="370" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="294.6" y="390" text-anchor="middle">DCGM</text>
+<text class="d-sub" x="294.6" y="406" text-anchor="middle">GPU metrics</text>
+<path class="d-line" d="M180 416 V427 M175 422 L180 427 L185 422"/>
+<text class="d-sub" x="12" y="440">DATA AND COST</text>
+<rect class="d-accent" x="12" y="446" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="65.3" y="466" text-anchor="middle">Model store</text>
+<text class="d-sub" x="65.3" y="482" text-anchor="middle">object + cache</text>
+<rect class="d-accent" x="126.7" y="446" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="180" y="466" text-anchor="middle">Datasets</text>
+<text class="d-sub" x="180" y="482" text-anchor="middle">S3 / NFS / PVC</text>
+<rect class="d-accent" x="241.3" y="446" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="294.6" y="466" text-anchor="middle">Cost view</text>
+<text class="d-sub" x="294.6" y="482" text-anchor="middle">GPU hours/team</text>
+</svg>
+        <figcaption>Inference and training share one GPU fleet, separated by queues, quotas and node pools. The GPU Operator handles drivers so nodes are interchangeable.</figcaption>
+      </figure>
+      <div style="min-width:0">
+        <span class="eyebrow">Reference architecture</span>
+        <h2>One GPU fleet, many workloads</h2>
+        <p>The biggest savings rarely come from cheaper GPUs. They come from not leaving them idle: partitioning cards for small models, queueing jobs instead of reserving nodes, scaling inference down when traffic drops, and loading models quickly enough that scaling is practical.</p>
+        <ul class="check-list">
+          <li><strong>Right-sized slices</strong>: MIG on supported data-centre GPUs, time-slicing for development.</li>
+          <li><strong>Fair sharing</strong>: Kueue or Volcano queues with per-team quotas and borrowing.</li>
+          <li><strong>Fast model loading</strong>: cached weights on local NVMe or shared storage near the GPUs.</li>
+          <li><strong>Visible usage</strong>: DCGM metrics joined with team labels for showback.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col">
+      <div style="min-width:0">
+        <span class="eyebrow">Implementation</span>
+        <h2>What we implement</h2>
+        <ul class="check-list">
+          <li>GPU node pools on cloud (EKS, AKS, GKE) or bare metal, with the NVIDIA GPU Operator managing drivers, container toolkit, device plugin and DCGM exporter.</li>
+          <li>GPU sharing using Multi-Instance GPU (MIG) profiles and time-slicing, chosen per workload's isolation needs.</li>
+          <li>Batch scheduling with Kueue or Volcano: queues, quotas, priorities, preemption and gang scheduling.</li>
+          <li>ML platform components: Kubeflow Notebooks, Pipelines and training operators, or Ray clusters with KubeRay.</li>
+          <li>Model serving with KServe and vLLM (and other runtimes such as Triton where suitable), including autoscaling and canary rollouts.</li>
+          <li>Model and dataset storage: object storage, high-throughput file systems and local caches for fast cold starts.</li>
+          <li>GPU observability and cost reporting by team, project and model.</li>
+          <li>Security for AI workloads: isolated namespaces, network policies, secrets for model registries and signed model images.</li>
+        </ul>
+      </div>
+      <div style="min-width:0">
+        <span class="eyebrow">Stack</span>
+        <h2>Platforms and tooling</h2>
+        <ul class="tag-list" aria-label="Platforms and tooling">
+          <li class="tag">NVIDIA GPU Operator</li><li class="tag">DCGM Exporter</li><li class="tag">MIG</li><li class="tag">Time-slicing</li><li class="tag">Node Feature Discovery</li><li class="tag">Kueue</li><li class="tag">Volcano</li><li class="tag">Kubeflow</li><li class="tag">KubeRay</li><li class="tag">Ray</li>
+          <li class="tag">KServe</li><li class="tag">vLLM</li><li class="tag">Triton Inference Server</li><li class="tag">Karpenter GPU pools</li><li class="tag">KEDA</li><li class="tag">MLflow</li><li class="tag">MinIO-compatible storage</li><li class="tag">OpenCost</li><li class="tag">Prometheus</li><li class="tag">Grafana</li>
+        </ul>
+        <div class="callout mt-4">
+          <strong>Estimating GPU budgets?</strong> Use the <a href="cost-estimator.html">cost estimator</a> for a rough starting range, then let us model your actual workload mix.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Day-2 operations</span>
+        <h2>Day-2 support we provide</h2>
+        <p class="lead">GPU platforms add drivers, firmware and fast-moving ML frameworks to the usual cluster work. Our <a href="support.html">support plans</a> cover all of it.</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></div><h3>Upgrades</h3><p>Kubernetes, GPU Operator, driver and CUDA compatibility planned together, tested on a canary GPU node before the pool is rolled.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Patching</h3><p>Driver and firmware security updates, serving runtime patches, and refreshed base images for training and inference containers.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><h3>Monitoring</h3><p>GPU utilisation, memory, temperature and XID errors from DCGM, inference latency and throughput, and queue wait times per team.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></div><h3>Backup and DR</h3><p>Model registry and pipeline metadata backups, versioned model artefacts, and serving endpoints that can be recreated in another region or cluster.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V12"/><path d="M10 20V8"/><path d="M16 20V4"/><path d="M2 20h20"/></svg></div><h3>Scaling and cost</h3><p>Scale-to-zero for idle inference, spot or preemptible GPUs for tolerant jobs, MIG profile tuning and monthly utilisation reviews.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v4"/><path d="M12 17.5h.01"/></svg></div><h3>Incident response</h3><p>Failed GPUs, driver mismatches, out-of-memory errors, stuck jobs and inference latency spikes, triaged with GPU-aware runbooks.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col">
+      <div style="min-width:0">
+        <span class="eyebrow">Lessons learned</span>
+        <h2>Common pitfalls we prevent</h2>
+        <ul class="check-list">
+          <li><strong>Whole GPUs reserved for notebooks</strong> that sit idle most of the day.</li>
+          <li><strong>Drivers baked into node images by hand</strong>, drifting out of step with CUDA versions in containers.</li>
+          <li><strong>Non-GPU pods landing on GPU nodes</strong> because taints and tolerations were missing.</li>
+          <li><strong>Slow cold starts</strong> from downloading large model weights on every scale-up.</li>
+          <li><strong>Distributed jobs deadlocking</strong> when only some of their pods get scheduled.</li>
+          <li><strong>No per-team visibility</strong>, so GPU costs cannot be explained or controlled.</li>
+        </ul>
+      </div>
+      <div style="min-width:0">
+        <span class="eyebrow">Timeline</span>
+        <h2>A typical project</h2>
+        <div class="table-wrap">
+          <table>
+            <caption class="muted" style="caption-side:bottom;padding:10px 16px;text-align:left">Durations are typical ranges. GPU availability and hardware lead times can affect the schedule.</caption>
+            <thead><tr><th scope="col">Phase</th><th scope="col">Duration</th><th scope="col">Deliverable</th></tr></thead>
+            <tbody>
+              <tr><td>Workload and capacity analysis</td><td>1–2 weeks</td><td>GPU sizing, sharing strategy, design</td></tr>
+              <tr><td>GPU foundation</td><td>1–2 weeks</td><td>GPU pools, GPU Operator, MIG / time-slicing</td></tr>
+              <tr><td>Scheduling and quotas</td><td>1–2 weeks</td><td>Kueue or Volcano queues, team quotas</td></tr>
+              <tr><td>ML platform and serving</td><td>2–4 weeks</td><td>Kubeflow / Ray, KServe / vLLM endpoints</td></tr>
+              <tr><td>Observability and cost</td><td>1–2 weeks</td><td>GPU dashboards, showback, alerting</td></tr>
+              <tr><td>Load test and handover</td><td>1–2 weeks</td><td>Serving benchmarks, runbooks, training</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container two-col">
+      <div style="min-width:0">
+        <span class="eyebrow">FAQ</span>
+        <h2>GPU and AI questions</h2>
+        <p class="muted">Related services: <a href="services.html#ai">AI and ML platforms</a>, <a href="services.html#finops">FinOps</a>, <a href="services.html#observability">observability</a>, and <a href="support.html">support</a>.</p>
+      </div>
+      <div class="faq">
+        <details><summary>MIG or time-slicing?</summary><div>MIG splits supported data-centre GPUs into hardware-isolated instances with dedicated memory, which suits production inference of smaller models. Time-slicing lets several pods share a GPU without memory isolation, which is fine for development and light workloads but not for strict multi-tenancy.</div></details>
+        <details><summary>Kueue or Volcano?</summary><div>Kueue is a Kubernetes SIG project that adds job queueing and quotas on top of the default scheduler and integrates with many job types. Volcano is a full batch scheduler with rich gang scheduling and HPC-style features. Kueue is often the simpler starting point; Volcano suits heavier batch and HPC workloads.</div></details>
+        <details><summary>Should we serve LLMs with vLLM or KServe?</summary><div>They work together. vLLM is a high-throughput inference engine for large language models; KServe provides the Kubernetes serving layer around runtimes like vLLM, with autoscaling, routing and rollouts. Simpler setups can run vLLM as a plain Deployment.</div></details>
+        <details><summary>Cloud GPUs or our own servers?</summary><div>Cloud suits variable or experimental demand and avoids long hardware lead times. Owned servers can be much cheaper for steady, high utilisation. Many teams use both: a baseline on owned hardware and cloud capacity for peaks.</div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+</body>
+</html>

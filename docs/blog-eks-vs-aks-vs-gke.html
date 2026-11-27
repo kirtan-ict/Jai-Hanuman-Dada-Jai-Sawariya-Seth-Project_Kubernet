@@ -1,0 +1,341 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EKS vs AKS vs GKE: Choosing a Managed Kubernetes Service | KubeSetu</title>
+  <meta name="description" content="A practical comparison of Amazon EKS, Azure AKS and Google GKE covering control planes, networking, identity, node management, operations and cost, with a decision framework.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "EKS vs AKS vs GKE: choosing a managed Kubernetes service",
+    "description": "A practical comparison of Amazon EKS, Azure AKS and Google GKE covering control planes, networking, identity, node management, operations and cost, with a decision framework.",
+    "articleSection": "Architecture",
+    "author": { "@type": "Organization", "name": "KubeSetu Engineering" },
+    "publisher": { "@type": "Organization", "name": "KubeSetu", "logo": { "@type": "ImageObject", "url": "assets/img/logo.svg" } },
+    "datePublished": "2026-11-28",
+    "dateModified": "2026-11-28",
+    "mainEntityOfPage": "blog-eks-vs-aks-vs-gke.html",
+    "timeRequired": "PT9M"
+  }
+  </script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="blog.html">Blog</a> / EKS vs AKS vs GKE</div>
+      <h1>EKS vs AKS vs GKE: choosing a managed Kubernetes service</h1>
+      <p class="lead">All three hyperscalers run conformant Kubernetes. The differences that matter show up in networking, identity, node lifecycle and day-two operations, and in how well each one fits the organisation you already have.</p>
+      <ul class="tag-list" aria-label="Article details">
+        <li class="tag">Architecture</li>
+        <li class="tag">9 min read</li>
+        <li class="tag">By KubeSetu Engineering</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container sidebar-layout">
+      <article style="min-width:0; overflow-wrap:break-word">
+        <p>Teams often approach this decision as a feature comparison: which service has the newest Kubernetes minor version, which one has the slickest console, which one launched a headline feature last quarter. Those comparisons age badly. Every provider ships changes constantly, and a feature gap today is frequently closed within a release cycle or two.</p>
+        <p>A more durable way to choose is to look at the architectural seams where a managed service makes decisions on your behalf, and ask whether those decisions suit your workloads, your skills and your existing cloud estate. This article walks through those seams and finishes with a short decision framework.</p>
+
+        <div class="callout">
+          <strong>A note on versions and pricing.</strong> Supported Kubernetes versions, support windows, control plane fees and feature availability change regularly and can differ by region. Treat anything you read here as a map of the terrain, then check the official release notes and pricing pages for each provider before you commit.
+        </div>
+
+        <h2 id="what-managed-means">What "managed" actually covers</h2>
+        <p>In all three services the provider runs the control plane: the API server, etcd, the scheduler and the controller manager. You do not patch those machines, back up etcd yourself or size the API server. You do still own most of what makes a cluster useful:</p>
+        <ul>
+          <li>Worker node configuration, operating system choice and upgrade cadence (unless you opt into a fully managed node mode).</li>
+          <li>Cluster add-ons such as ingress controllers, DNS tuning, certificate management, policy engines and observability agents.</li>
+          <li>Workload security: RBAC, Pod Security, network policy, secrets handling and image provenance.</li>
+          <li>Capacity planning, autoscaling configuration and cost governance.</li>
+        </ul>
+        <p>The line between "provider" and "you" is drawn slightly differently by each service, and each now offers a more opinionated mode that pushes the line further toward the provider. GKE Autopilot, EKS Auto Mode and AKS Automatic all manage nodes, scaling and a curated set of add-ons for you, at the cost of some flexibility. If your team is small and your workloads are conventional stateless services, those modes deserve serious consideration before you reach for the standard tier.</p>
+
+        <h2 id="control-plane">Control plane and upgrades</h2>
+        <p>Each provider publishes a support calendar for Kubernetes minor versions and eventually upgrades clusters that fall out of support. The questions to ask are:</p>
+        <ul>
+          <li><strong>How much control do you get over timing?</strong> Look for maintenance windows, exclusion periods and release channels. GKE and AKS both offer channel-based automatic upgrades; EKS leans toward explicit, operator-driven upgrades, with an extended support option for older versions.</li>
+          <li><strong>What happens to nodes?</strong> Control plane upgrades are handled by the provider, but node pools usually follow separately. Find out whether node upgrades are automatic, how surge is configured, and how the service respects PodDisruptionBudgets during a drain.</li>
+          <li><strong>Is there an uptime commitment?</strong> Providers typically offer a financially backed SLA only on certain tiers. Read the current terms rather than assuming.</li>
+        </ul>
+        <p>Whichever service you choose, build an upgrade routine you can run every few months. Our <a href="blog-kubernetes-upgrade-playbook.html">upgrade playbook</a> covers that process in detail.</p>
+
+        <h2 id="networking">Networking models</h2>
+        <p>Networking is where the three services differ most, and it is the hardest thing to change after the fact.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th scope="col">Concern</th><th scope="col">Amazon EKS</th><th scope="col">Azure AKS</th><th scope="col">Google GKE</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Default pod networking</td><td>VPC CNI: pods get routable VPC IP addresses</td><td>Azure CNI, with an overlay option that conserves VNet address space</td><td>VPC-native: pods use alias IP ranges in the VPC</td></tr>
+              <tr><td>IP planning pressure</td><td>High with flat VPC IPs; prefix delegation and custom networking help</td><td>Lower with overlay mode; higher with flat VNet IPs</td><td>Moderate; secondary ranges must be sized up front</td></tr>
+              <tr><td>eBPF dataplane option</td><td>Bring your own (for example Cilium)</td><td>Azure CNI powered by Cilium</td><td>GKE Dataplane V2 (Cilium-based)</td></tr>
+              <tr><td>Network policy</td><td>Supported through the VPC CNI or a third-party engine</td><td>Azure, Cilium or Calico engines</td><td>Built into Dataplane V2</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-2">The practical lesson: plan your address space before you create the first cluster. Flat, routable pod IPs make integration with existing VPC or VNet resources simple, but they consume addresses quickly. Overlay models save addresses but add a translation hop when pods talk to things outside the cluster. Neither is wrong; picking one by accident is.</p>
+
+        <h2 id="identity">Identity and access</h2>
+        <p>Every serious workload eventually needs to call a cloud API: read from object storage, pull a secret, publish to a queue. The secure pattern on all three clouds is the same in principle. A Kubernetes ServiceAccount is federated to a cloud identity, and pods receive short-lived credentials automatically, with no static keys stored in the cluster.</p>
+        <p>The wiring differs. On EKS you can use IAM Roles for Service Accounts (IRSA) or the newer EKS Pod Identity. AKS uses Microsoft Entra Workload ID. GKE uses Workload Identity Federation for GKE. Here is what the ServiceAccount side looks like on each:</p>
+<pre><code># Amazon EKS (IRSA): annotate with the IAM role ARN
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: orders-api
+  namespace: orders
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::111122223333:role/orders-api
+---
+# Azure AKS (Workload ID): annotate with the managed identity client ID
+# Pods must also carry the label azure.workload.identity/use: "true"
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: orders-api
+  namespace: orders
+  annotations:
+    azure.workload.identity/client-id: 00000000-0000-0000-0000-000000000000
+---
+# Google GKE (Workload Identity): annotate with the Google service account
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: orders-api
+  namespace: orders
+  annotations:
+    iam.gke.io/gcp-service-account: orders-api@my-project.iam.gserviceaccount.com</code></pre>
+        <p>Human access matters just as much. EKS maps cloud principals to Kubernetes permissions through access entries; AKS integrates with Entra ID and can use Azure RBAC for Kubernetes authorisation; GKE integrates with Google Cloud IAM and Google Groups for RBAC. If your organisation already has a mature identity platform in one cloud, that alone can tip the decision.</p>
+
+        <div class="callout warn">
+          <strong>Avoid static cloud keys in Secrets.</strong> Long-lived access keys stored as Kubernetes Secrets are one of the most common findings in cluster reviews. Workload identity federation exists on all three platforms; use it from day one.
+        </div>
+
+        <h2 id="nodes">Nodes, autoscaling and compute choice</h2>
+        <p>All three services support managed node groups or pools with a choice of instance families, including Arm-based and GPU instances. The meaningful differences are in how capacity is added and removed:</p>
+        <ul>
+          <li><strong>EKS</strong> works with the Kubernetes Cluster Autoscaler and with Karpenter, which provisions individual right-sized nodes directly from pending pod requirements rather than scaling predefined groups. EKS Auto Mode builds on that approach as a managed feature.</li>
+          <li><strong>AKS</strong> ships a managed Cluster Autoscaler per node pool and offers node auto-provisioning based on Karpenter.</li>
+          <li><strong>GKE</strong> offers a managed Cluster Autoscaler with node auto-provisioning, and Autopilot removes node management entirely by billing for pod resource requests.</li>
+        </ul>
+        <p>If you run bursty or heterogeneous workloads, flexible provisioning and spot or preemptible capacity can make a large difference to your bill. Our <a href="blog-kubernetes-cost-optimisation.html">cost optimisation guide</a> covers those trade-offs. Before you commit, check that the instance types you need, especially GPUs, are available in your target regions with the quota you expect.</p>
+
+        <h2 id="operations">Day-two operations and ecosystem</h2>
+        <p>The provider console is rarely where your team will live. Instead, look at how each service fits your operational tooling:</p>
+        <ul>
+          <li><strong>Observability:</strong> each cloud has native integrations (CloudWatch Container Insights, Azure Monitor, Google Cloud Observability) and managed Prometheus offerings. If you already run a vendor-neutral stack, confirm that agents and exporters are supported on the node images you plan to use.</li>
+          <li><strong>Add-on management:</strong> EKS add-ons, AKS extensions and GKE managed components handle CSI drivers, CNI and DNS. Know which ones the provider upgrades for you and which ones you must version-pin yourself.</li>
+          <li><strong>Infrastructure as code:</strong> all three are well supported by Terraform, OpenTofu, Pulumi and Crossplane. Provider-specific CLIs (<code>eksctl</code>, <code>az aks</code>, <code>gcloud container</code>) are handy for experiments but should not be your source of truth.</li>
+          <li><strong>Hybrid reach:</strong> EKS Anywhere, Azure Arc and GKE's attached and on-premises options extend each ecosystem beyond the public cloud. If you also run clusters <a href="infra-on-prem.html">on premises</a> or at the <a href="infra-edge.html">edge</a>, evaluate how consistent the experience really is.</li>
+        </ul>
+        <p>A quick sanity check that works identically on any of the three:</p>
+<pre><code># Confirm which API server and node versions you are actually running
+kubectl version
+kubectl get nodes -o wide
+
+# See which add-ons and system components are installed
+kubectl get pods -n kube-system -o wide
+
+# List the API groups the cluster serves (useful when comparing providers)
+kubectl api-versions | sort</code></pre>
+
+        <h2 id="cost">Understanding the cost model</h2>
+        <p>The control plane fee is usually the smallest line item. The real cost drivers are compute, storage, load balancers, NAT and cross-zone or egress traffic, logging ingestion and support plans. When comparing providers:</p>
+        <ul>
+          <li>Model your workload at realistic utilisation rather than comparing list prices for identical instance sizes.</li>
+          <li>Include data transfer. Chatty microservices spread across zones can generate surprising inter-zone charges on any cloud.</li>
+          <li>Account for committed-use discounts, savings plans or reservations you already hold. Existing commitments often make one provider clearly cheaper for you specifically.</li>
+          <li>Price the "fully managed" modes on their own terms. Billing per pod request can be cheaper for small or spiky clusters and more expensive for well-packed steady ones.</li>
+        </ul>
+        <p>Our <a href="cost-estimator.html">cost estimator</a> gives a first-pass figure you can refine with provider calculators.</p>
+
+        <h2 id="decision">A decision framework</h2>
+        <p>In our experience, the right answer is usually determined by a handful of organisational facts rather than by technical features. Work through these in order:</p>
+        <ol>
+          <li><strong>Where does your data and identity already live?</strong> If most of your estate, data gravity and identity governance sit in one cloud, start there. Crossing clouds for Kubernetes alone rarely pays back.</li>
+          <li><strong>What does your team already know?</strong> Familiarity with one provider's IAM and networking model shortens every incident.</li>
+          <li><strong>How opinionated do you want the platform to be?</strong> If you want minimal node management, compare the fully managed modes side by side. If you need custom kernels, specialised hardware or deep networking control, the standard tiers are a better fit.</li>
+          <li><strong>What are your regulatory and regional constraints?</strong> Check region availability, sovereignty options and compliance attestations for the specific services you will use.</li>
+          <li><strong>How portable must you be?</strong> Keep workloads portable by sticking to upstream APIs, using GitOps, and isolating cloud-specific integrations behind clearly owned components.</li>
+        </ol>
+        <p>If you are weighing managed Kubernetes against enterprise platforms or self-managed clusters, our <a href="decision-guide.html">platform decision guide</a> walks through a broader comparison.</p>
+
+        <h2 id="takeaways">Key takeaways</h2>
+        <ul class="check-list">
+          <li>All three services run conformant Kubernetes; the meaningful differences are in networking, identity, node lifecycle and operations.</li>
+          <li>Plan IP address space and choose a CNI model deliberately before you create your first production cluster.</li>
+          <li>Use workload identity federation on every provider instead of static cloud credentials.</li>
+          <li>Evaluate the fully managed modes (Autopilot, Auto Mode, Automatic) if your workloads are conventional and your team is small.</li>
+          <li>Let data gravity, existing identity, team skills and commitments drive the decision more than feature checklists.</li>
+          <li>Verify versions, support windows and pricing against official documentation; they change often.</li>
+        </ul>
+      </article>
+
+      <aside style="min-width:0" aria-label="Article navigation and help">
+        <div class="sticky">
+          <nav class="card" aria-label="Table of contents">
+            <h3>On this page</h3>
+            <ul class="mb-0">
+              <li><a href="#what-managed-means">What "managed" covers</a></li>
+              <li><a href="#control-plane">Control plane and upgrades</a></li>
+              <li><a href="#networking">Networking models</a></li>
+              <li><a href="#identity">Identity and access</a></li>
+              <li><a href="#nodes">Nodes and autoscaling</a></li>
+              <li><a href="#operations">Day-two operations</a></li>
+              <li><a href="#cost">Cost model</a></li>
+              <li><a href="#decision">Decision framework</a></li>
+              <li><a href="#takeaways">Key takeaways</a></li>
+            </ul>
+          </nav>
+          <div class="card mt-2">
+            <h3>Need help?</h3>
+            <p class="muted">We design and build production clusters on EKS, AKS and GKE, and can run a vendor-neutral evaluation for your workloads.</p>
+            <div class="btn-row">
+              <a class="btn btn-primary btn-sm" href="infra-managed-cloud.html">Managed cloud Kubernetes</a>
+              <a class="btn btn-outline btn-sm" href="services.html#assessment">Assessment &amp; strategy</a>
+              <a class="btn btn-outline btn-sm" href="assessment.html">Free assessment</a>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Keep reading</span>
+        <h2>Related articles</h2>
+      </div>
+      <div class="grid grid-3">
+        <a class="card" href="blog-kubernetes-upgrade-playbook.html">
+          <ul class="tag-list mt-0"><li class="tag">Operations</li></ul>
+          <h3 class="mt-2">The zero-downtime Kubernetes upgrade playbook</h3>
+          <p class="muted">Pre-checks, deprecated APIs, PodDisruptionBudgets, surge upgrades and rollback.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+        <a class="card" href="blog-kubernetes-cost-optimisation.html">
+          <ul class="tag-list mt-0"><li class="tag">Cost</li></ul>
+          <h3 class="mt-2">Cutting Kubernetes cost without cutting reliability</h3>
+          <p class="muted">Rightsizing, autoscalers, spot capacity, bin packing and cost visibility.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+        <a class="card" href="blog-kubernetes-security-checklist.html">
+          <ul class="tag-list mt-0"><li class="tag">Security</li></ul>
+          <h3 class="mt-2">A production Kubernetes security checklist</h3>
+          <p class="muted">RBAC, Pod Security, network policy, supply chain and runtime detection.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+</body>
+</html>

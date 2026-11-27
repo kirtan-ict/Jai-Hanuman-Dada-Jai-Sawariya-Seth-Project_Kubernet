@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Migrating VM and Legacy Workloads to Kubernetes | KubeSetu</title>
+  <meta name="description" content="A practical guide to migrating VM and legacy workloads to Kubernetes: portfolio assessment, the 6Rs, containerisation, stateful data and low-risk cutover strategies.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "Migrating VM and legacy workloads to Kubernetes",
+    "description": "A practical guide to migrating VM and legacy workloads to Kubernetes: portfolio assessment, the 6Rs, containerisation, stateful data and low-risk cutover strategies.",
+    "articleSection": "Migration",
+    "author": { "@type": "Organization", "name": "KubeSetu Engineering" },
+    "publisher": { "@type": "Organization", "name": "KubeSetu", "logo": { "@type": "ImageObject", "url": "assets/img/logo.svg" } },
+    "datePublished": "2026-11-28",
+    "dateModified": "2026-11-28",
+    "mainEntityOfPage": "blog-vm-to-kubernetes-migration.html",
+    "timeRequired": "PT10M"
+  }
+  </script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="blog.html">Blog</a> / VM to Kubernetes migration</div>
+      <h1>Migrating VM and legacy workloads to Kubernetes</h1>
+      <p class="lead">Moving to Kubernetes is not a lift-and-shift exercise with a new logo. Done well, it is a sequence of small, reversible steps that start with understanding what you run and end with a cutover nobody notices.</p>
+      <ul class="tag-list" aria-label="Article details">
+        <li class="tag">Migration</li>
+        <li class="tag">10 min read</li>
+        <li class="tag">By KubeSetu Engineering</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container sidebar-layout">
+      <article style="min-width:0; overflow-wrap:break-word">
+        <p>Most organisations arrive at Kubernetes with a mixed estate: a few modern services that already run in containers, a large middle of applications on virtual machines that were never designed for orchestration, and a long tail of packaged software, scheduled scripts and databases. Treating all of that as one migration project is the fastest route to a stalled programme.</p>
+        <p>The approach below breaks the work into phases. Each phase produces something useful on its own, and each cutover keeps a clear path back.</p>
+
+        <h2 id="why">Start with why</h2>
+        <p>Write down the outcomes you expect before you inventory anything. Typical goals include faster and safer releases, higher infrastructure utilisation, consistent operations across environments, or getting off ageing hypervisor licences and hardware. These goals decide which applications move first and what "done" looks like. They also tell you when <em>not</em> to migrate something: if an application changes once a year and runs happily on a VM, moving it may cost more than it returns.</p>
+
+        <h2 id="assess">Assess the portfolio</h2>
+        <p>For each application, collect enough information to make a decision, not a perfect model. A spreadsheet is fine.</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr><th scope="col">Dimension</th><th scope="col">What to capture</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Runtime</td><td>Language, framework, OS dependencies, licensing constraints</td></tr>
+              <tr><td>State</td><td>Local disk writes, databases, file shares, session storage, caches</td></tr>
+              <tr><td>Dependencies</td><td>Upstream and downstream services, hard-coded hostnames or IPs, shared libraries</td></tr>
+              <tr><td>Configuration</td><td>Where config lives, how secrets are delivered, environment differences</td></tr>
+              <tr><td>Operations</td><td>How it is deployed, monitored, backed up and scaled today</td></tr>
+              <tr><td>Business</td><td>Owner, criticality, change frequency, maintenance windows, compliance needs</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="mt-2">Dependency mapping deserves real effort. Network flow logs, APM traces and a conversation with the people who get paged for each system usually reveal connections that no diagram shows. Hidden dependencies, such as a nightly job that writes to another application's database, are the most common reason a cutover has to be rolled back.</p>
+        <p>Score each application on two axes: <strong>business value of moving</strong> and <strong>technical difficulty</strong>. Your first wave should be valuable enough to matter and easy enough to succeed; it is where you build the platform, the pipelines and the team's confidence.</p>
+
+        <h2 id="six-rs">Choose a path with the 6Rs</h2>
+        <p>The "6Rs" are a common vocabulary for migration decisions. Assign one to each application:</p>
+        <ul>
+          <li><strong>Rehost</strong> (lift and shift): move the workload largely unchanged. On Kubernetes this can mean running the VM itself with KubeVirt or an equivalent virtualisation layer, which lets you consolidate platforms before modernising.</li>
+          <li><strong>Replatform</strong> (lift, tinker and shift): containerise the application with minimal code changes, externalise configuration, and swap a self-run database for a managed one. This is the most common path to Kubernetes.</li>
+          <li><strong>Refactor</strong> (re-architect): change the application to be cloud native, for example splitting a monolith or making it stateless. Highest effort, highest long-term payoff, best done incrementally.</li>
+          <li><strong>Repurchase</strong>: replace the application with a SaaS product or a vendor-supplied container version.</li>
+          <li><strong>Retire</strong>: switch it off. Assessments routinely turn up applications nobody uses.</li>
+          <li><strong>Retain</strong>: leave it where it is for now, perhaps because of licensing, hardware ties or low value.</li>
+        </ul>
+        <div class="callout">
+          <strong>Be explicit about Retain and Retire.</strong> A migration programme that claims to move everything will stall on the hardest few percent. Deciding early what stays, and what goes away, keeps momentum on the work that matters.
+        </div>
+
+        <h2 id="containerise">Containerise properly</h2>
+        <p>A container image should be small, reproducible and free of environment-specific settings. A multi-stage build keeps build tools out of the runtime image:</p>
+<pre><code># Build stage: compile with the full toolchain
+FROM maven:3-eclipse-temurin-21 AS build
+WORKDIR /src
+COPY pom.xml .
+RUN mvn -q dependency:go-offline
+COPY src ./src
+RUN mvn -q package -DskipTests
+
+# Runtime stage: only the JRE and the application
+FROM eclipse-temurin:21-jre
+WORKDIR /app
+COPY --from=build /src/target/app.jar /app/app.jar
+USER 10001
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "/app/app.jar"]</code></pre>
+        <p>Base image tags are illustrative; pin the versions your organisation supports, ideally by digest. Beyond the Dockerfile, a containerised application needs a few behaviours that VMs often lacked:</p>
+        <ul>
+          <li><strong>Configuration from the environment.</strong> Move settings into ConfigMaps and secrets into an external secret store, rather than baking them into images or files on disk.</li>
+          <li><strong>Logs to stdout and stderr.</strong> Let the platform collect logs instead of writing rotating files inside the container.</li>
+          <li><strong>Health endpoints.</strong> Expose liveness and readiness checks so Kubernetes knows when to restart the process and when to send traffic.</li>
+          <li><strong>Graceful shutdown.</strong> Handle <code>SIGTERM</code>, stop accepting new work and finish in-flight requests.</li>
+          <li><strong>Non-root execution.</strong> Run as an unprivileged user so the workload can meet the restricted Pod Security Standard (see our <a href="blog-kubernetes-security-checklist.html">security checklist</a>).</li>
+        </ul>
+<pre><code>apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: billing
+  namespace: billing
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: billing
+  template:
+    metadata:
+      labels:
+        app: billing
+    spec:
+      terminationGracePeriodSeconds: 45
+      containers:
+        - name: billing
+          image: registry.example.com/billing/billing:1.0.0
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - configMapRef:
+                name: billing-config
+          readinessProbe:
+            httpGet:
+              path: /health/ready
+              port: 8080
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health/live
+              port: 8080
+            initialDelaySeconds: 30
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 500m
+              memory: 768Mi
+            limits:
+              memory: 1Gi</code></pre>
+
+        <h2 id="state">Handle stateful data</h2>
+        <p>Stateless application tiers are the easy part. Data needs its own plan:</p>
+        <ul>
+          <li><strong>Prefer managed data services</strong> where they exist and meet your requirements. Moving a database to a managed service is often a separate, earlier migration that de-risks the application move.</li>
+          <li><strong>Run databases on Kubernetes deliberately</strong>, using a mature operator, StatefulSets and a CSI storage class with the right performance and snapshot support. Have tested backup and restore before production data arrives.</li>
+          <li><strong>Plan data synchronisation for cutover.</strong> Native replication, change data capture or a final dump-and-restore during a short write freeze are the usual options. Rehearse with production-sized data to measure real timings.</li>
+          <li><strong>Find local state.</strong> Uploaded files on local disk, in-memory sessions and file-based caches must move to object storage, a shared volume or a cache service before the application can scale horizontally.</li>
+        </ul>
+        <div class="callout warn">
+          <strong>Rehearse the data move.</strong> Synchronisation and cutover timings measured on a test dataset rarely match production. Run at least one full rehearsal with realistic volumes, and time the rollback path too.
+        </div>
+
+        <h2 id="cutover">Cutover strategies</h2>
+        <p>Pick the cutover style per application based on risk and how well the old and new versions can coexist.</p>
+        <ul>
+          <li><strong>Big bang:</strong> stop the old system, migrate, start the new one. Simple, and acceptable for low-criticality systems with an agreed maintenance window.</li>
+          <li><strong>Blue/green:</strong> run both environments and switch traffic at the load balancer or DNS layer. Switching back is fast as long as data has not diverged.</li>
+          <li><strong>Weighted or canary:</strong> send a small percentage of traffic to the Kubernetes version, watch error rates and latency, and increase gradually.</li>
+          <li><strong>Strangler fig:</strong> place a routing layer in front of a monolith and move one route or capability at a time to new services on Kubernetes. Ideal for large applications you are refactoring incrementally.</li>
+          <li><strong>Parallel run:</strong> process the same inputs in both systems and compare outputs before switching. Useful for batch and financial workloads where correctness must be proven.</li>
+        </ul>
+        <p>During a transition, workloads on Kubernetes often need to call services still running on VMs. A Service without a selector, paired with an EndpointSlice, gives those VMs a stable in-cluster name, so application configuration does not change when the backend later moves into the cluster:</p>
+<pre><code>apiVersion: v1
+kind: Service
+metadata:
+  name: legacy-ledger
+  namespace: billing
+spec:
+  ports:
+    - name: http
+      port: 80
+      protocol: TCP
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: legacy-ledger-vms
+  namespace: billing
+  labels:
+    kubernetes.io/service-name: legacy-ledger
+addressType: IPv4
+ports:
+  - name: http
+    port: 8080
+    protocol: TCP
+endpoints:
+  - addresses: ["10.20.30.41"]
+  - addresses: ["10.20.30.42"]</code></pre>
+        <p>Pods can now call <code>http://legacy-ledger.billing</code>. When the ledger itself migrates, replace the EndpointSlice with a normal selector-based Service and the callers never notice.</p>
+
+        <h2 id="after">After the move</h2>
+        <p>Keep the old environment available, but idle, until the new one has run through a full business cycle: month-end processing, peak traffic, backups and a restore test. Then decommission it properly, removing DNS records, firewall rules and credentials. Finally, feed what you learned back into the plan for the next wave; each wave should be faster than the last. A GitOps workflow, described in our <a href="blog-gitops-with-argocd.html">Argo CD guide</a>, makes migrated applications reproducible from day one.</p>
+
+        <h2 id="takeaways">Key takeaways</h2>
+        <ul class="check-list">
+          <li>Define the business outcomes first; they decide what moves, in what order, and what stays.</li>
+          <li>Invest in dependency mapping; hidden dependencies cause most failed cutovers.</li>
+          <li>Assign one of the 6Rs to every application, and be explicit about Retain and Retire.</li>
+          <li>Containerise with externalised config, stdout logging, health probes, graceful shutdown and non-root users.</li>
+          <li>Plan stateful data separately, prefer managed services, and rehearse synchronisation with real volumes.</li>
+          <li>Choose a cutover style per application and always keep a tested route back.</li>
+        </ul>
+      </article>
+
+      <aside style="min-width:0" aria-label="Article navigation and help">
+        <div class="sticky">
+          <nav class="card" aria-label="Table of contents">
+            <h3>On this page</h3>
+            <ul class="mb-0">
+              <li><a href="#why">Start with why</a></li>
+              <li><a href="#assess">Assess the portfolio</a></li>
+              <li><a href="#six-rs">The 6Rs</a></li>
+              <li><a href="#containerise">Containerise properly</a></li>
+              <li><a href="#state">Stateful data</a></li>
+              <li><a href="#cutover">Cutover strategies</a></li>
+              <li><a href="#after">After the move</a></li>
+              <li><a href="#takeaways">Key takeaways</a></li>
+            </ul>
+          </nav>
+          <div class="card mt-2">
+            <h3>Need help?</h3>
+            <p class="muted">We assess portfolios, containerise applications and run rehearsed cutovers, on cloud, on premises or hybrid.</p>
+            <div class="btn-row">
+              <a class="btn btn-primary btn-sm" href="services.html#migration">Migration services</a>
+              <a class="btn btn-outline btn-sm" href="infra-hybrid.html">Hybrid &amp; multi-cloud</a>
+              <a class="btn btn-outline btn-sm" href="assessment.html">Free assessment</a>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Keep reading</span>
+        <h2>Related articles</h2>
+      </div>
+      <div class="grid grid-3">
+        <a class="card" href="blog-eks-vs-aks-vs-gke.html">
+          <ul class="tag-list mt-0"><li class="tag">Architecture</li></ul>
+          <h3 class="mt-2">EKS vs AKS vs GKE</h3>
+          <p class="muted">How to choose a managed Kubernetes service for your organisation.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+        <a class="card" href="blog-gitops-with-argocd.html">
+          <ul class="tag-list mt-0"><li class="tag">Operations</li></ul>
+          <h3 class="mt-2">GitOps with Argo CD: a working blueprint</h3>
+          <p class="muted">Repo layout, ApplicationSets, environments, secrets and progressive delivery.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+        <a class="card" href="blog-kubernetes-security-checklist.html">
+          <ul class="tag-list mt-0"><li class="tag">Security</li></ul>
+          <h3 class="mt-2">A production Kubernetes security checklist</h3>
+          <p class="muted">RBAC, Pod Security, network policy, supply chain and runtime detection.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+</body>
+</html>

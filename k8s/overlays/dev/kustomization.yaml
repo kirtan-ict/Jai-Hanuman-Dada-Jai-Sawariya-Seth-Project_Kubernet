@@ -1,0 +1,57 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Dev runs in its own namespace (kustomize renames the base Namespace object too).
+namespace: jai-hanuman-dada-dev
+
+resources:
+  - ../../base
+
+labels:
+  - pairs:
+      environment: dev
+    includeSelectors: false
+
+images:
+  - name: ghcr.io/kirtan-ict/kubesetu-site
+    newTag: latest # tracks main: CI pushes :latest on every merge
+
+replicas:
+  - name: kubesetu-site
+    count: 1
+
+patches:
+  # Single replica: HPA 1..2, and a PDB that never blocks node drains.
+  - target:
+      kind: HorizontalPodAutoscaler
+      name: kubesetu-site
+    patch: |-
+      - op: replace
+        path: /spec/minReplicas
+        value: 1
+      - op: replace
+        path: /spec/maxReplicas
+        value: 2
+  - target:
+      kind: PodDisruptionBudget
+      name: kubesetu-site
+    patch: |-
+      - op: remove
+        path: /spec/minAvailable
+      - op: add
+        path: /spec/maxUnavailable
+        value: 1
+  - target:
+      kind: Ingress
+      name: kubesetu-site
+    patch: |-
+      - op: replace
+        path: /metadata/annotations/cert-manager.io~1cluster-issuer
+        value: letsencrypt-staging
+      - op: replace
+        path: /spec/tls/0/hosts/0
+        value: dev.kubesetu.example.com
+      - op: replace
+        path: /spec/rules/0/host
+        value: dev.kubesetu.example.com
+  # EDIT above: letsencrypt-staging -> your staging ClusterIssuer; dev.kubesetu.example.com -> your dev domain.

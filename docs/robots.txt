@@ -1,0 +1,8 @@
+# KubeSetu
+User-agent: *
+Allow: /
+Disallow: /_template.html
+Disallow: /404.html
+
+# EDIT: replace kubesetu.example.com with your real domain
+Sitemap: https://kubesetu.example.com/sitemap.xml

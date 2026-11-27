@@ -1,0 +1,343 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Zero-Downtime Kubernetes Upgrade Playbook | KubeSetu</title>
+  <meta name="description" content="A step-by-step playbook for zero-downtime Kubernetes cluster upgrades: pre-checks, deprecated API detection, PodDisruptionBudgets, surge and blue/green node pools, and rollback.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "The zero-downtime Kubernetes upgrade playbook",
+    "description": "A step-by-step playbook for zero-downtime Kubernetes cluster upgrades: pre-checks, deprecated API detection, PodDisruptionBudgets, surge and blue/green node pools, and rollback.",
+    "articleSection": "Operations",
+    "author": { "@type": "Organization", "name": "KubeSetu Engineering" },
+    "publisher": { "@type": "Organization", "name": "KubeSetu", "logo": { "@type": "ImageObject", "url": "assets/img/logo.svg" } },
+    "datePublished": "2026-11-28",
+    "dateModified": "2026-11-28",
+    "mainEntityOfPage": "blog-kubernetes-upgrade-playbook.html",
+    "timeRequired": "PT10M"
+  }
+  </script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="blog.html">Blog</a> / Kubernetes upgrade playbook</div>
+      <h1>The zero-downtime Kubernetes upgrade playbook</h1>
+      <p class="lead">Kubernetes ships new minor versions several times a year, and each one has a finite support window. Upgrades are not optional, so the goal is to make them routine, predictable and invisible to your users.</p>
+      <ul class="tag-list" aria-label="Article details">
+        <li class="tag">Operations</li>
+        <li class="tag">10 min read</li>
+        <li class="tag">By KubeSetu Engineering</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container sidebar-layout">
+      <article style="min-width:0; overflow-wrap:break-word">
+        <p>Most upgrade incidents are not caused by Kubernetes itself. They come from things around it: a manifest that still uses an API version the new release no longer serves, an add-on that was never tested against the new version, or a workload with a single replica and no disruption budget that disappears while its node drains. A good playbook turns each of those risks into a check you run before anything changes.</p>
+        <p>This playbook applies to managed services (EKS, AKS, GKE) and to self-managed clusters built with tools like kubeadm. The mechanics of clicking "upgrade" differ; the discipline does not.</p>
+
+        <h2 id="version-rules">Understand the version rules</h2>
+        <p>Kubernetes has a documented version skew policy. The details are in the upstream documentation and you should read the current version, but the principles that shape every upgrade plan are stable:</p>
+        <ul>
+          <li><strong>Upgrade one minor version at a time.</strong> Skipping minor versions on the control plane is not supported. If you are several versions behind, plan a sequence of upgrades.</li>
+          <li><strong>Control plane first, then nodes.</strong> The kubelet must never be newer than the API server. Nodes may lag the control plane by a limited number of minor versions, which is what gives you room to upgrade node pools gradually.</li>
+          <li><strong>Clients have a skew window too.</strong> Keep <code>kubectl</code>, CI tooling and controllers within the supported range of the API server.</li>
+        </ul>
+        <div class="callout">
+          <strong>Check the release notes every time.</strong> Each Kubernetes release, and each managed provider, publishes notes covering removed APIs, changed defaults and feature gate graduations. Read them for every version you pass through, not only the final target.
+        </div>
+
+        <h2 id="pre-checks">Pre-flight checks</h2>
+        <p>Run these at least a week before the maintenance window, so you have time to fix what they find:</p>
+        <ol>
+          <li><strong>Cluster health.</strong> All nodes Ready, no pods stuck in CrashLoopBackOff or Pending for unexplained reasons, and control plane components healthy.</li>
+          <li><strong>Backups you have actually restored.</strong> For self-managed clusters, take an etcd snapshot. On any cluster, back up resources and persistent volumes with a tool such as Velero, and prove the restore path works in a scratch cluster.</li>
+          <li><strong>Add-on compatibility.</strong> List every controller and operator: CNI, CSI drivers, ingress, cert-manager, service mesh, policy engines, autoscalers, monitoring agents. Confirm each supports the target version, and upgrade them first if needed.</li>
+          <li><strong>Capacity headroom.</strong> Surge and blue/green strategies temporarily add nodes. Confirm quotas, IP address space and budget allow it.</li>
+          <li><strong>Change freeze and communication.</strong> Agree a window, an owner, a rollback decision point and a status channel.</li>
+        </ol>
+<pre><code># Quick health snapshot before you start
+kubectl get nodes -o wide
+kubectl get pods -A --field-selector=status.phase!=Running,status.phase!=Succeeded
+kubectl get --raw='/readyz?verbose'
+
+# Inventory controller images so you can check compatibility
+kubectl get deploy,ds,sts -A \
+  -o jsonpath='{range .items[*]}{.metadata.namespace}{"\t"}{.metadata.name}{"\t"}{.spec.template.spec.containers[*].image}{"\n"}{end}'</code></pre>
+
+        <h2 id="deprecated-apis">Find deprecated and removed APIs</h2>
+        <p>Kubernetes deprecates API versions well ahead of removing them, but when removal happens, any manifest, Helm chart or controller still using the old version will fail to apply. This is the single most common cause of broken deployments after an upgrade.</p>
+        <p>Attack it from three directions:</p>
+        <ul>
+          <li><strong>Scan your source.</strong> Open-source scanners such as <em>pluto</em> and <em>kubent</em> (kube-no-trouble) inspect manifests, Helm releases and live clusters for API versions that are deprecated or removed in a target release. Run them in CI against your Git repositories so new problems never merge.</li>
+          <li><strong>Ask the API server.</strong> The API server records requests to deprecated APIs in a metric and adds a warning header to responses. This catches clients that never appear in your repositories, such as old operators or scripts.</li>
+          <li><strong>Check provider insights.</strong> Some managed services surface upgrade readiness findings, including deprecated API usage, in their console or API. Use them as a second opinion.</li>
+        </ul>
+<pre><code># Which deprecated APIs have clients requested recently?
+kubectl get --raw /metrics | grep apiserver_requested_deprecated_apis
+
+# Example output line (fields tell you group, version, resource and removal release):
+# apiserver_requested_deprecated_apis{group="policy",removed_release="1.25",resource="podsecuritypolicies",subresource="",version="v1beta1"} 1</code></pre>
+        <p>Once you find an offender, update the manifest to the replacement API version, update the Helm chart, or upgrade the controller. Remember that objects already stored in etcd are converted by the API server; the risk is in clients that create or update resources using the old version.</p>
+
+        <h2 id="pdbs">Protect workloads with PodDisruptionBudgets</h2>
+        <p>Node upgrades work by cordoning and draining nodes. Draining uses the Eviction API, which respects PodDisruptionBudgets (PDBs). A PDB tells Kubernetes how many replicas of an application may be unavailable at once due to voluntary disruption.</p>
+<pre><code>apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: checkout-pdb
+  namespace: shop
+spec:
+  maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: checkout</code></pre>
+        <p>A PDB only helps if the workload is actually resilient. Pair it with:</p>
+        <ul>
+          <li>At least two replicas, spread across nodes and zones with <code>topologySpreadConstraints</code> or pod anti-affinity.</li>
+          <li>Accurate readiness probes, so traffic only reaches pods that can serve it.</li>
+          <li>Graceful shutdown: handle <code>SIGTERM</code>, finish in-flight requests, and set <code>terminationGracePeriodSeconds</code> to match.</li>
+        </ul>
+        <div class="callout warn">
+          <strong>Watch for PDBs that block drains forever.</strong> A PDB with <code>maxUnavailable: 0</code>, or <code>minAvailable</code> equal to the replica count, means no pod can ever be evicted. Drains will stall, and some managed services will eventually force the eviction after a timeout. Audit PDBs before the window.
+        </div>
+<pre><code># Find PDBs that currently allow zero disruptions
+kubectl get pdb -A
+# Look for ALLOWED DISRUPTIONS = 0 on workloads that are otherwise healthy</code></pre>
+
+        <h2 id="control-plane">Upgrade the control plane</h2>
+        <p>On a managed service this is a single API call or console action; on a self-managed cluster it is the kubeadm upgrade sequence on each control plane node. In both cases:</p>
+        <ul>
+          <li>Upgrade a non-production cluster first and let it soak for long enough to exercise your normal deployment and batch cycles.</li>
+          <li>Watch API server error rates and latency during and after the change.</li>
+          <li>Confirm that controllers reconcile normally, admission webhooks respond, and CI pipelines can still deploy.</li>
+        </ul>
+        <p>Admission webhooks deserve special attention. If a webhook's backing service is unavailable and its failure policy is <code>Fail</code>, the API server will reject matching requests, which can stall the rest of the upgrade.</p>
+
+        <h2 id="nodes">Upgrade nodes: surge or blue/green</h2>
+        <p>There are two common strategies for nodes. Both avoid downtime when workloads are configured correctly.</p>
+        <h3>In-place surge upgrades</h3>
+        <p>The node pool creates extra nodes on the new version (the surge), then cordons and drains old nodes one batch at a time. Surge is controlled by settings such as maximum surge and maximum unavailable. Higher surge is faster but needs more spare capacity.</p>
+<pre><code># GKE: add one surge node at a time and never take nodes away before replacements are ready
+gcloud container node-pools update default-pool \
+  --cluster=prod-cluster --region=europe-west1 \
+  --max-surge-upgrade=1 --max-unavailable-upgrade=0
+
+# AKS: allow a percentage of extra nodes during upgrade
+az aks nodepool update \
+  --resource-group prod-rg --cluster-name prod-cluster \
+  --name userpool --max-surge 33%</code></pre>
+        <h3>Blue/green node pools</h3>
+        <p>Create a brand-new node pool on the target version, cordon the old pool, drain it gradually, and delete it once you are satisfied. This takes more capacity but gives you the cleanest rollback: if something is wrong, uncordon the old pool and drain the new one.</p>
+<pre><code># Move workloads from an old node pool to a new one, one node at a time
+for node in $(kubectl get nodes -l pool=blue -o name); do
+  kubectl cordon "$node"
+done
+
+for node in $(kubectl get nodes -l pool=blue -o name); do
+  kubectl drain "$node" --ignore-daemonsets --delete-emptydir-data --timeout=10m
+  sleep 60   # give rescheduled pods time to become Ready
+done</code></pre>
+        <p>The <code>pool</code> label above is an example; use whatever label your provider or node pool configuration applies. Note that <code>--delete-emptydir-data</code> discards data in <code>emptyDir</code> volumes, which is normally scratch space, but confirm that nothing depends on it.</p>
+
+        <h2 id="validate">Validate after the upgrade</h2>
+        <p>Do not declare victory when the progress bar finishes. Run a short validation script and keep watching for a day:</p>
+        <ul>
+          <li>All nodes report the expected kubelet version and are Ready.</li>
+          <li>Every Deployment, StatefulSet and DaemonSet has its desired number of ready replicas.</li>
+          <li>Synthetic checks against public endpoints pass; error rates and latency are at baseline.</li>
+          <li>A test deployment through your normal pipeline succeeds, proving CI, admission and GitOps still work.</li>
+        </ul>
+<pre><code># Kubelet version per node
+kubectl get nodes -o custom-columns=NAME:.metadata.name,VERSION:.status.nodeInfo.kubeletVersion
+
+# Deployments whose ready count does not match the desired count
+kubectl get deploy -A --no-headers | awk '{split($3, r, "/"); if (r[1] != r[2]) print}'</code></pre>
+
+        <h2 id="rollback">Plan the rollback before you need it</h2>
+        <p>Be honest about what can and cannot be rolled back:</p>
+        <ul>
+          <li><strong>Control planes generally cannot be downgraded</strong> on managed services, and downgrading a self-managed control plane is risky because stored objects may already be written in newer formats. Your safety net for the control plane is testing in lower environments and, in the worst case, restoring into a fresh cluster at the old version.</li>
+          <li><strong>Nodes can be rolled back</strong> by keeping the old node pool around (blue/green) until the new one is proven.</li>
+          <li><strong>Workloads can be rolled back</strong> through your GitOps or deployment tooling, provided manifests use API versions both releases understand.</li>
+        </ul>
+        <p>For critical platforms, some teams go further and upgrade by building a new cluster at the target version and shifting traffic to it with DNS or a global load balancer. It costs more but makes rollback a traffic change rather than an infrastructure change. Our <a href="blog-gitops-with-argocd.html">GitOps guide</a> explains how to make a new cluster reproducible enough for this to be practical.</p>
+
+        <h2 id="takeaways">Key takeaways</h2>
+        <ul class="check-list">
+          <li>Upgrade one minor version at a time, control plane first, and read the release notes for every version you pass through.</li>
+          <li>Scan manifests, Helm releases and live API traffic for deprecated APIs well before the window, and block new ones in CI.</li>
+          <li>Give every important workload multiple replicas, topology spread, good probes, graceful shutdown and a sensible PDB.</li>
+          <li>Use surge upgrades for routine changes and blue/green node pools when you want the cleanest node rollback.</li>
+          <li>Validate with real deployments and synthetic checks, not just node status.</li>
+          <li>Accept that control planes rarely roll back, and test accordingly in lower environments.</li>
+        </ul>
+      </article>
+
+      <aside style="min-width:0" aria-label="Article navigation and help">
+        <div class="sticky">
+          <nav class="card" aria-label="Table of contents">
+            <h3>On this page</h3>
+            <ul class="mb-0">
+              <li><a href="#version-rules">Version rules</a></li>
+              <li><a href="#pre-checks">Pre-flight checks</a></li>
+              <li><a href="#deprecated-apis">Deprecated APIs</a></li>
+              <li><a href="#pdbs">PodDisruptionBudgets</a></li>
+              <li><a href="#control-plane">Control plane upgrade</a></li>
+              <li><a href="#nodes">Surge or blue/green nodes</a></li>
+              <li><a href="#validate">Validate</a></li>
+              <li><a href="#rollback">Rollback</a></li>
+              <li><a href="#takeaways">Key takeaways</a></li>
+            </ul>
+          </nav>
+          <div class="card mt-2">
+            <h3>Need help?</h3>
+            <p class="muted">Our engineers plan and run version upgrades as part of managed support, with tested rollback and 24/7 cover.</p>
+            <div class="btn-row">
+              <a class="btn btn-primary btn-sm" href="support.html">Managed support</a>
+              <a class="btn btn-outline btn-sm" href="services.html#reliability">Reliability engineering</a>
+              <a class="btn btn-outline btn-sm" href="assessment.html">Free assessment</a>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Keep reading</span>
+        <h2>Related articles</h2>
+      </div>
+      <div class="grid grid-3">
+        <a class="card" href="blog-gitops-with-argocd.html">
+          <ul class="tag-list mt-0"><li class="tag">Operations</li></ul>
+          <h3 class="mt-2">GitOps with Argo CD: a working blueprint</h3>
+          <p class="muted">Repo layout, ApplicationSets, environments, secrets and progressive delivery.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+        <a class="card" href="blog-kubernetes-security-checklist.html">
+          <ul class="tag-list mt-0"><li class="tag">Security</li></ul>
+          <h3 class="mt-2">A production Kubernetes security checklist</h3>
+          <p class="muted">RBAC, Pod Security, network policy, supply chain and runtime detection.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+        <a class="card" href="blog-eks-vs-aks-vs-gke.html">
+          <ul class="tag-list mt-0"><li class="tag">Architecture</li></ul>
+          <h3 class="mt-2">EKS vs AKS vs GKE</h3>
+          <p class="muted">How to choose a managed Kubernetes service for your organisation.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+</body>
+</html>

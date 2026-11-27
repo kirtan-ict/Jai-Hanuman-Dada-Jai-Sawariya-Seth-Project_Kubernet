@@ -1,0 +1,402 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Production Kubernetes Security Checklist | KubeSetu</title>
+  <meta name="description" content="A practical production Kubernetes security checklist covering RBAC, Pod Security Standards, network policies, secrets, image signing and SBOMs, runtime detection and CIS benchmarks.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    "headline": "A production Kubernetes security checklist",
+    "description": "A practical production Kubernetes security checklist covering RBAC, Pod Security Standards, network policies, secrets, image signing and SBOMs, runtime detection and CIS benchmarks.",
+    "articleSection": "Security",
+    "author": { "@type": "Organization", "name": "KubeSetu Engineering" },
+    "publisher": { "@type": "Organization", "name": "KubeSetu", "logo": { "@type": "ImageObject", "url": "assets/img/logo.svg" } },
+    "datePublished": "2026-11-28",
+    "dateModified": "2026-11-28",
+    "mainEntityOfPage": "blog-kubernetes-security-checklist.html",
+    "timeRequired": "PT10M"
+  }
+  </script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+  <section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="blog.html">Blog</a> / Kubernetes security checklist</div>
+      <h1>A production Kubernetes security checklist</h1>
+      <p class="lead">Kubernetes is flexible by design, and many of its defaults favour getting started over locking down. This checklist walks through the controls we expect on any production cluster, layer by layer, with configuration you can adapt.</p>
+      <ul class="tag-list" aria-label="Article details">
+        <li class="tag">Security</li>
+        <li class="tag">10 min read</li>
+        <li class="tag">By KubeSetu Engineering</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container sidebar-layout">
+      <article style="min-width:0; overflow-wrap:break-word">
+        <p>Security in Kubernetes is a stack of overlapping controls. No single one is sufficient, and each covers a gap the others leave. An attacker who gets code execution inside a container should find that the container runs as an unprivileged user, cannot reach most of the network, holds no useful credentials, cannot talk to the API server with meaningful permissions, and that their activity is being noticed.</p>
+        <p>We have grouped the checklist into the layers where we most often find gaps during cluster reviews. Work through them in order; earlier items tend to be cheaper to fix and reduce more risk.</p>
+
+        <h2 id="access">1. API access and RBAC</h2>
+        <p>The Kubernetes API is the front door to everything. Control who can reach it and what they can do once inside.</p>
+        <ul class="check-list">
+          <li>The API endpoint is private, or restricted to known networks, wherever your platform allows it.</li>
+          <li>Humans authenticate through your identity provider (OIDC or the cloud's IAM integration), never with shared certificates or static tokens.</li>
+          <li>Nobody uses <code>cluster-admin</code> for daily work; break-glass access is audited and time-limited.</li>
+          <li>Permissions are granted to groups, not individuals, and scoped to namespaces with Roles and RoleBindings wherever possible.</li>
+          <li>Wildcards (<code>*</code>) in verbs or resources are treated as findings, and access to <code>secrets</code>, <code>pods/exec</code> and <code>escalate</code>/<code>bind</code>/<code>impersonate</code> verbs is reviewed explicitly.</li>
+          <li>Workloads use dedicated ServiceAccounts, and pods that do not call the API set <code>automountServiceAccountToken: false</code>.</li>
+        </ul>
+        <p>A narrowly scoped role for a team that deploys applications into its own namespace might look like this:</p>
+<pre><code>apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: app-deployer
+  namespace: payments
+rules:
+  - apiGroups: ["apps"]
+    resources: ["deployments", "statefulsets"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["services", "configmaps"]
+    verbs: ["get", "list", "watch", "create", "update", "patch"]
+  - apiGroups: [""]
+    resources: ["pods", "pods/log"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: payments-team-deployers
+  namespace: payments
+subjects:
+  - kind: Group
+    name: payments-engineers
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: app-deployer
+  apiGroup: rbac.authorization.k8s.io</code></pre>
+        <p>Verify what an identity can actually do rather than reading YAML and guessing:</p>
+<pre><code>kubectl auth can-i --list --namespace payments --as=system:serviceaccount:payments:checkout
+kubectl auth can-i get secrets --all-namespaces --as=jane@example.com</code></pre>
+
+        <h2 id="pod-security">2. Pod Security Standards</h2>
+        <p>Pod Security Standards define three profiles: <em>privileged</em>, <em>baseline</em> and <em>restricted</em>. The built-in Pod Security Admission controller enforces them per namespace through labels. Aim for <em>restricted</em> on application namespaces and reserve exceptions for system components that genuinely need host access.</p>
+<pre><code>apiVersion: v1
+kind: Namespace
+metadata:
+  name: payments
+  labels:
+    pod-security.kubernetes.io/enforce: restricted
+    pod-security.kubernetes.io/audit: restricted
+    pod-security.kubernetes.io/warn: restricted</code></pre>
+        <p>A container spec that satisfies the restricted profile sets an explicit security context:</p>
+<pre><code>securityContext:          # pod level
+  runAsNonRoot: true
+  seccompProfile:
+    type: RuntimeDefault
+containers:
+  - name: app
+    image: registry.example.com/payments/checkout@sha256:REPLACE_WITH_DIGEST
+    securityContext:      # container level
+      allowPrivilegeEscalation: false
+      readOnlyRootFilesystem: true
+      capabilities:
+        drop: ["ALL"]</code></pre>
+        <div class="callout">
+          <strong>Roll out gradually.</strong> Apply the <code>warn</code> and <code>audit</code> labels first. You will see which workloads would be rejected without breaking anything, then fix them before switching on <code>enforce</code>.
+        </div>
+        <p>For rules beyond what Pod Security covers, such as requiring resource requests, approved registries or specific labels, add a policy engine like Kyverno or OPA Gatekeeper, or use the built-in ValidatingAdmissionPolicy with CEL expressions.</p>
+
+        <h2 id="network">3. Network policies</h2>
+        <p>By default, every pod can talk to every other pod in the cluster. Network policies let you change that, but only if your CNI enforces them. Check that it does before relying on them.</p>
+        <ul class="check-list">
+          <li>Each application namespace has a default-deny policy for ingress, and ideally for egress.</li>
+          <li>Allow rules are explicit and minimal: which pods, which ports, from where.</li>
+          <li>Egress to the cloud metadata endpoint is blocked for workloads that do not need it.</li>
+          <li>DNS egress is explicitly allowed, otherwise default-deny egress will break name resolution.</li>
+        </ul>
+<pre><code>apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny
+  namespace: payments
+spec:
+  podSelector: {}
+  policyTypes: ["Ingress", "Egress"]
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-dns
+  namespace: payments
+spec:
+  podSelector: {}
+  policyTypes: ["Egress"]
+  egress:
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+          podSelector:
+            matchLabels:
+              k8s-app: kube-dns
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53
+---
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: checkout-from-ingress
+  namespace: payments
+spec:
+  podSelector:
+    matchLabels:
+      app: checkout
+  policyTypes: ["Ingress"]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx
+      ports:
+        - protocol: TCP
+          port: 8080</code></pre>
+        <p>The DNS pod label varies by distribution, so confirm it in your cluster. For layer 7 rules, mutual TLS between services or identity-aware policies, consider a service mesh or a CNI with extended policy support.</p>
+
+        <h2 id="secrets">4. Secrets management</h2>
+        <p>Kubernetes Secrets are base64-encoded, not encrypted, unless you configure encryption at rest. Treat them accordingly.</p>
+        <ul class="check-list">
+          <li>Encryption at rest for Secrets is enabled, preferably with a KMS provider so keys live outside the cluster.</li>
+          <li>The source of truth for secrets is an external manager (a cloud secrets service or Vault), synced in with the External Secrets Operator or mounted with the Secrets Store CSI Driver.</li>
+          <li>Plain-text secrets never live in Git. If you use GitOps, store only encrypted or reference objects (see our <a href="blog-gitops-with-argocd.html">Argo CD guide</a>).</li>
+          <li>Secrets are mounted as files rather than environment variables where possible, since environment variables leak more easily into logs and crash dumps.</li>
+          <li>Cloud access uses workload identity federation instead of long-lived keys.</li>
+          <li>Rotation is automated and tested.</li>
+        </ul>
+
+        <h2 id="supply-chain">5. Image supply chain: signing and SBOMs</h2>
+        <p>You should be able to answer two questions about every running container: where did this image come from, and what is inside it?</p>
+        <ul class="check-list">
+          <li>Images come from a small set of approved registries, and admission policy rejects anything else.</li>
+          <li>Deployments reference images by digest, or tags are immutable in your registry.</li>
+          <li>CI scans images for known vulnerabilities and fails builds above an agreed severity threshold.</li>
+          <li>CI generates a Software Bill of Materials (SBOM) in SPDX or CycloneDX format and attaches it to the image.</li>
+          <li>Images are signed in CI (for example with Sigstore cosign), and admission policy verifies signatures before pods run.</li>
+          <li>Base images are minimal (distroless or slim) and rebuilt regularly.</li>
+        </ul>
+<pre><code># In CI: generate an SBOM, sign the image and attach the SBOM as a signed attestation
+syft registry.example.com/payments/checkout@sha256:REPLACE_WITH_DIGEST -o spdx-json &gt; sbom.spdx.json
+cosign sign --yes registry.example.com/payments/checkout@sha256:REPLACE_WITH_DIGEST
+cosign attest --yes --type spdxjson --predicate sbom.spdx.json \
+  registry.example.com/payments/checkout@sha256:REPLACE_WITH_DIGEST</code></pre>
+        <p>The commands above use keyless signing, which ties signatures to your CI system's identity. Signing alone achieves nothing unless something verifies it; configure an admission policy (Kyverno's image verification rules or the Sigstore policy controller) that checks signatures against your expected signer identity. Flags and defaults evolve, so follow the tools' current documentation.</p>
+
+        <h2 id="runtime">6. Runtime detection and audit logging</h2>
+        <p>Preventive controls reduce risk; detective controls tell you when prevention failed.</p>
+        <ul class="check-list">
+          <li>API server audit logging is enabled and shipped to a central, tamper-resistant store, with a policy that captures access to secrets, RBAC changes and <code>exec</code> sessions.</li>
+          <li>A runtime security tool such as Falco or Tetragon watches system calls for suspicious behaviour: shells in containers, unexpected outbound connections, writes to sensitive paths.</li>
+          <li>Alerts route to people who are on call and know what to do with them.</li>
+          <li>You have an incident runbook covering how to isolate a pod (for example with a quarantine network policy), preserve evidence and rotate credentials.</li>
+        </ul>
+        <div class="callout warn">
+          <strong>Alert fatigue is a security risk.</strong> A detection tool that fires hundreds of untriaged alerts a day is effectively switched off. Start with a small set of high-signal rules and tune them before expanding.
+        </div>
+
+        <h2 id="cis">7. Node hardening and the CIS benchmark</h2>
+        <p>The CIS Kubernetes Benchmark is a widely used set of configuration recommendations for control plane components, etcd, kubelets and policies. Managed providers publish their own variants, because you cannot change control plane settings they own.</p>
+        <ul class="check-list">
+          <li>Run a benchmark scanner such as kube-bench periodically and track results over time.</li>
+          <li>Kubelet anonymous authentication is disabled and authorisation uses webhook mode.</li>
+          <li>Nodes run a minimal, regularly patched operating system; container-optimised OS images help here.</li>
+          <li>SSH to nodes is disabled or tightly controlled; access goes through audited tooling.</li>
+          <li>The instance metadata service is protected (for example, requiring session tokens and limiting hop counts on AWS).</li>
+        </ul>
+<pre><code># Run kube-bench as a one-off Job (manifests are published in the kube-bench repository;
+# pick the one that matches your platform) and read the results
+kubectl apply -f job.yaml
+kubectl logs job/kube-bench</code></pre>
+        <p>Treat benchmark output as a prioritised to-do list, not a pass/fail grade. Some findings will not apply to your platform, and documenting why is part of the exercise. For regulated environments, map these controls to your compliance framework early; it is much easier than retrofitting evidence later.</p>
+
+        <h2 id="takeaways">Key takeaways</h2>
+        <ul class="check-list">
+          <li>Lock down API access first: private endpoints, SSO, least-privilege RBAC and no daily use of cluster-admin.</li>
+          <li>Enforce the restricted Pod Security Standard on application namespaces, rolling out via warn and audit modes.</li>
+          <li>Default-deny network traffic per namespace, and confirm your CNI actually enforces policy.</li>
+          <li>Keep secrets in an external manager, encrypt them at rest, and never commit plain text to Git.</li>
+          <li>Sign images, generate SBOMs and verify both at admission time.</li>
+          <li>Turn on audit logging and runtime detection, and make sure alerts reach a human.</li>
+          <li>Benchmark nodes against CIS regularly and track remediation like any other backlog.</li>
+        </ul>
+      </article>
+
+      <aside style="min-width:0" aria-label="Article navigation and help">
+        <div class="sticky">
+          <nav class="card" aria-label="Table of contents">
+            <h3>On this page</h3>
+            <ul class="mb-0">
+              <li><a href="#access">API access and RBAC</a></li>
+              <li><a href="#pod-security">Pod Security Standards</a></li>
+              <li><a href="#network">Network policies</a></li>
+              <li><a href="#secrets">Secrets management</a></li>
+              <li><a href="#supply-chain">Signing and SBOMs</a></li>
+              <li><a href="#runtime">Runtime detection</a></li>
+              <li><a href="#cis">CIS benchmark</a></li>
+              <li><a href="#takeaways">Key takeaways</a></li>
+            </ul>
+          </nav>
+          <div class="card mt-2">
+            <h3>Need help?</h3>
+            <p class="muted">We run security reviews against this checklist and implement the fixes, including for air-gapped and regulated environments.</p>
+            <div class="btn-row">
+              <a class="btn btn-primary btn-sm" href="services.html#security">Security &amp; compliance</a>
+              <a class="btn btn-outline btn-sm" href="infra-air-gapped.html">Air-gapped clusters</a>
+              <a class="btn btn-outline btn-sm" href="assessment.html">Free assessment</a>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Keep reading</span>
+        <h2>Related articles</h2>
+      </div>
+      <div class="grid grid-3">
+        <a class="card" href="blog-gitops-with-argocd.html">
+          <ul class="tag-list mt-0"><li class="tag">Operations</li></ul>
+          <h3 class="mt-2">GitOps with Argo CD: a working blueprint</h3>
+          <p class="muted">Repo layout, ApplicationSets, environments, secrets and progressive delivery.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+        <a class="card" href="blog-kubernetes-upgrade-playbook.html">
+          <ul class="tag-list mt-0"><li class="tag">Operations</li></ul>
+          <h3 class="mt-2">The zero-downtime Kubernetes upgrade playbook</h3>
+          <p class="muted">Pre-checks, deprecated APIs, PodDisruptionBudgets, surge upgrades and rollback.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+        <a class="card" href="blog-eks-vs-aks-vs-gke.html">
+          <ul class="tag-list mt-0"><li class="tag">Architecture</li></ul>
+          <h3 class="mt-2">EKS vs AKS vs GKE</h3>
+          <p class="muted">How to choose a managed Kubernetes service for your organisation.</p>
+          <span class="card-link">Read article &rarr;</span>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+</body>
+</html>

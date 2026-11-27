@@ -1,0 +1,31 @@
+# 1) Deny all ingress and egress for every pod in the namespace.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-all
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+    - Egress
+---
+# 2) Allow only the ingress-nginx controller to reach the site on 8080.
+#    (Kubelet health probes are not subject to NetworkPolicy on mainstream CNIs.)
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-ingress-nginx-to-kubesetu-site
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: kubesetu-site
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: ingress-nginx # EDIT if your controller runs in another namespace
+      ports:
+        - protocol: TCP
+          port: 8080

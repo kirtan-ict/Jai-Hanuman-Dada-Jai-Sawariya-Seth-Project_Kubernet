@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Enterprise Kubernetes Platforms: OpenShift, Rancher, Tanzu, Mirantis | KubeSetu</title>
+  <meta name="description" content="Vendor-neutral implementation and support for Red Hat OpenShift (including ROSA and ARO), SUSE Rancher and RKE2, VMware Tanzu and Mirantis Kubernetes Engine, with a comparison and migration guidance.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+<section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="infrastructure.html">Infrastructure</a> / Enterprise Platforms</div>
+      <span class="eyebrow">Enterprise Kubernetes platforms</span>
+      <h1>OpenShift, Rancher, Tanzu and Mirantis, without the sales pitch</h1>
+      <p class="lead">Commercial platforms bundle Kubernetes with an operating system, tooling and a support contract. They can save a lot of assembly work. We are not a reseller, so we help you pick the one that suits you, implement it well, and move between them if you need to.</p>
+      <ul class="tag-list" aria-label="Platforms covered">
+        <li class="tag">Red Hat OpenShift</li><li class="tag">ROSA</li><li class="tag">ARO</li><li class="tag">SUSE Rancher</li><li class="tag">RKE2</li><li class="tag">VMware Tanzu</li><li class="tag">Mirantis Kubernetes Engine</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col">
+      <div class="card">
+        <div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l9 5-9 5-9-5z"/><path d="M3 13l9 5 9-5"/></svg></div>
+        <h2 class="mt-0" style="font-size:1.4rem">When this fits</h2>
+        <ul class="check-list">
+          <li>Auditors or internal policy require a vendor-supported, certified distribution.</li>
+          <li>You want one integrated stack (OS, registry, CI, monitoring, console) rather than assembling it.</li>
+          <li>Many teams of mixed experience need guardrails and a self-service console.</li>
+          <li>You already have a strategic relationship with Red Hat, SUSE, Broadcom / VMware or Mirantis.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <div class="icon accent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v4"/><path d="M12 17.5h.01"/></svg></div>
+        <h2 class="mt-0" style="font-size:1.4rem">When it doesn't</h2>
+        <ul>
+          <li>You run entirely in one public cloud and the provider's <a href="infra-managed-cloud.html">managed service</a> already covers your needs.</li>
+          <li>Subscription cost per core outweighs the operational effort it saves at your scale.</li>
+          <li>Your team prefers upstream tooling and is comfortable assembling the stack.</li>
+          <li>You need features faster than the vendor's release cadence delivers them.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Comparison</span>
+        <h2>How the platforms differ</h2>
+        <p class="lead">A simplified, vendor-neutral view. Product names, packaging and licensing change often, so always confirm current terms with the vendor.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th scope="col">Platform</th><th scope="col">Character</th><th scope="col">Where it runs</th><th scope="col">Best for</th><th scope="col">Watch out for</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Red Hat OpenShift</th><td>Opinionated, fully integrated platform on an immutable OS (RHCOS) with operators, routes, builds and a developer console.</td><td>On-premises, bare metal, all major clouds; managed as ROSA on AWS and ARO on Azure.</td><td>Regulated enterprises wanting one supported stack and strong security defaults.</td><td>Stricter defaults (for example non-root containers) need app changes; subscription cost; OpenShift-specific APIs.</td></tr>
+            <tr><th scope="row">SUSE Rancher + RKE2</th><td>Multi-cluster management layer plus lightweight, security-focused distributions (RKE2, K3s).</td><td>Anywhere; also manages EKS, AKS, GKE and other conformant clusters.</td><td>Mixed estates, edge fleets and teams that want close-to-upstream Kubernetes.</td><td>You still choose and integrate more of the surrounding stack yourself.</td></tr>
+            <tr><th scope="row">VMware Tanzu</th><td>Kubernetes integrated into vSphere, managed alongside VMs with familiar vCenter tooling.</td><td>Primarily vSphere-based private cloud.</td><td>Organisations deeply invested in VMware that want containers next to VMs.</td><td>Licensing is tied to current VMware bundles; check terms and roadmap before committing.</td></tr>
+            <tr><th scope="row">Mirantis Kubernetes Engine</th><td>Enterprise Kubernetes with a long history of supporting Docker Swarm workloads; Mirantis also maintains k0s.</td><td>On-premises, bare metal and cloud.</td><td>Existing Docker Enterprise / Swarm users and teams wanting a supported upstream-style distro.</td><td>Smaller ecosystem than the larger vendors; confirm the product roadmap for your version.</td></tr>
+            <tr><th scope="row">Upstream + managed cloud</th><td>The baseline: EKS, AKS, GKE or kubeadm / RKE2 with open-source add-ons.</td><td>Cloud, or anywhere with self-management.</td><td>Teams wanting maximum flexibility and lowest licence cost.</td><td>You own integration, upgrades and support (or use a partner).</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col">
+      <figure class="diagram" style="margin:0">
+        <svg viewBox="0 0 360 484" role="img" aria-labelledby="dg-ent-t dg-ent-d" xmlns="http://www.w3.org/2000/svg">
+<title id="dg-ent-t">Reference architecture for an enterprise Kubernetes platform</title>
+<desc id="dg-ent-d">Developers and operators use a self-service console, command line and GitOps. The vendor platform layer provides a management console, integrated registry and build, operator catalogue, and built-in monitoring and logging. Below it are a supported Kubernetes distribution and a vendor-supported or immutable operating system, running on infrastructure that may be bare metal, a hypervisor or a public cloud, with corporate identity, an external registry and SIEM integrated.</desc>
+<text class="d-sub" x="12" y="18">USERS</text>
+<rect class="d-accent" x="12" y="24" width="164" height="44" rx="8"/>
+<text class="d-text" x="94" y="44" text-anchor="middle">Developers</text>
+<text class="d-sub" x="94" y="60" text-anchor="middle">console, CLI</text>
+<rect class="d-accent" x="184" y="24" width="164" height="44" rx="8"/>
+<text class="d-text" x="266" y="44" text-anchor="middle">Platform team</text>
+<text class="d-sub" x="266" y="60" text-anchor="middle">GitOps, policy</text>
+<path class="d-line" d="M180 70 V81 M175 76 L180 81 L185 76"/>
+<text class="d-sub" x="12" y="94">VENDOR PLATFORM SERVICES</text>
+<rect class="d-brand" x="12" y="100" width="106.7" height="58" rx="8"/>
+<text class="d-text" x="65.3" y="120" text-anchor="middle">Console</text>
+<text class="d-sub" x="65.3" y="136" text-anchor="middle">self-service</text>
+<rect class="d-brand" x="126.7" y="100" width="106.7" height="58" rx="8"/>
+<text class="d-text" x="180" y="120" text-anchor="middle">Registry + CI</text>
+<text class="d-sub" x="180" y="136" text-anchor="middle">builds</text>
+<text class="d-sub" x="180" y="150" text-anchor="middle">pipelines</text>
+<rect class="d-brand" x="241.3" y="100" width="106.7" height="58" rx="8"/>
+<text class="d-text" x="294.6" y="120" text-anchor="middle">Operators</text>
+<text class="d-sub" x="294.6" y="136" text-anchor="middle">catalogue</text>
+<path class="d-line" d="M180 160 V171 M175 166 L180 171 L185 166"/>
+<text class="d-sub" x="12" y="184">BUILT-IN OPERATIONS</text>
+<rect class="d-brand" x="12" y="190" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="65.3" y="210" text-anchor="middle">Monitoring</text>
+<text class="d-sub" x="65.3" y="226" text-anchor="middle">metrics, alerts</text>
+<rect class="d-brand" x="126.7" y="190" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="180" y="210" text-anchor="middle">Logging</text>
+<text class="d-sub" x="180" y="226" text-anchor="middle">central logs</text>
+<rect class="d-brand" x="241.3" y="190" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="294.6" y="210" text-anchor="middle">Security</text>
+<text class="d-sub" x="294.6" y="226" text-anchor="middle">policy, scanning</text>
+<path class="d-line" d="M180 236 V247 M175 242 L180 247 L185 242"/>
+<text class="d-sub" x="12" y="260">DISTRIBUTION</text>
+<rect class="d-box" x="12" y="266" width="164" height="58" rx="8"/>
+<text class="d-text" x="94" y="286" text-anchor="middle">Kubernetes</text>
+<text class="d-sub" x="94" y="302" text-anchor="middle">supported build</text>
+<rect class="d-box" x="184" y="266" width="164" height="58" rx="8"/>
+<text class="d-text" x="266" y="286" text-anchor="middle">OS</text>
+<text class="d-sub" x="266" y="302" text-anchor="middle">RHCOS / SLE Micro</text>
+<text class="d-sub" x="266" y="316" text-anchor="middle">/ hardened Linux</text>
+<path class="d-line" d="M180 326 V337 M175 332 L180 337 L185 332"/>
+<text class="d-sub" x="12" y="350">INFRASTRUCTURE</text>
+<rect class="d-box" x="12" y="356" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="65.3" y="376" text-anchor="middle">Bare metal</text>
+<text class="d-sub" x="65.3" y="392" text-anchor="middle">servers</text>
+<rect class="d-box" x="126.7" y="356" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="180" y="376" text-anchor="middle">Hypervisor</text>
+<text class="d-sub" x="180" y="392" text-anchor="middle">vSphere, KVM</text>
+<rect class="d-box" x="241.3" y="356" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="294.6" y="376" text-anchor="middle">Public cloud</text>
+<text class="d-sub" x="294.6" y="392" text-anchor="middle">ROSA / ARO</text>
+<path class="d-line" d="M180 402 V413 M175 408 L180 413 L185 408"/>
+<text class="d-sub" x="12" y="426">ENTERPRISE INTEGRATIONS</text>
+<rect class="d-accent" x="12" y="432" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="65.3" y="452" text-anchor="middle">SSO</text>
+<text class="d-sub" x="65.3" y="468" text-anchor="middle">AD / LDAP / OIDC</text>
+<rect class="d-accent" x="126.7" y="432" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="180" y="452" text-anchor="middle">SIEM + audit</text>
+<text class="d-sub" x="180" y="468" text-anchor="middle">log export</text>
+<rect class="d-accent" x="241.3" y="432" width="106.7" height="44" rx="8"/>
+<text class="d-text" x="294.6" y="452" text-anchor="middle">Backup</text>
+<text class="d-sub" x="294.6" y="468" text-anchor="middle">Velero / OADP</text>
+</svg>
+        <figcaption>Enterprise platforms package the middle layers as one supported product. Our work is mostly in the integrations around them and in tailoring defaults to your organisation.</figcaption>
+      </figure>
+      <div style="min-width:0">
+        <span class="eyebrow">Reference architecture</span>
+        <h2>What you buy, and what you still own</h2>
+        <p>A platform subscription covers the distribution, its operating system and the bundled tooling. It does not decide your tenancy model, network design, identity integration, backup strategy or how applications are onboarded. That is where most projects succeed or stall.</p>
+        <ul class="check-list">
+          <li><strong>Tenancy model</strong>: projects or namespaces per team, quotas and network isolation.</li>
+          <li><strong>Integration</strong> with corporate identity, certificates, proxies, SIEM and CMDB.</li>
+          <li><strong>Hardening</strong> aligned with CIS benchmarks and your internal security baseline.</li>
+          <li><strong>Golden paths</strong> so teams deploy the approved way by default.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container two-col">
+      <div style="min-width:0">
+        <span class="eyebrow">Implementation</span>
+        <h2>What we implement</h2>
+        <ul class="check-list">
+          <li>Vendor-neutral platform selection with a weighted scorecard and proof of concept.</li>
+          <li>Installation: OpenShift IPI / UPI or Agent-based installs, ROSA and ARO, Rancher on RKE2, Tanzu on vSphere, MKE.</li>
+          <li>Identity, RBAC and multi-tenancy design across teams and environments.</li>
+          <li>Operator lifecycle and add-on management (OperatorHub, Rancher apps, Helm).</li>
+          <li>CI/CD and GitOps (OpenShift GitOps / Pipelines, Fleet, Argo CD, Tekton).</li>
+          <li>Backup with OADP or Velero, and DR between sites.</li>
+          <li>Migration between platforms: workload inventory, API translation (for example Routes to Ingress or Gateway API, SCCs to Pod Security Standards), data moves and cut-over.</li>
+        </ul>
+      </div>
+      <div style="min-width:0">
+        <span class="eyebrow">Stack</span>
+        <h2>Platforms and tooling</h2>
+        <ul class="tag-list" aria-label="Platforms and tooling">
+          <li class="tag">OpenShift Container Platform</li><li class="tag">OKD</li><li class="tag">ROSA</li><li class="tag">ARO</li><li class="tag">Red Hat ACM</li><li class="tag">OpenShift GitOps</li><li class="tag">OADP</li>
+          <li class="tag">Rancher</li><li class="tag">RKE2</li><li class="tag">K3s</li><li class="tag">Fleet</li><li class="tag">NeuVector</li><li class="tag">Longhorn</li>
+          <li class="tag">vSphere Kubernetes Service</li><li class="tag">Tanzu Mission Control</li><li class="tag">Mirantis Kubernetes Engine</li><li class="tag">k0s</li><li class="tag">Helm</li><li class="tag">Argo CD</li><li class="tag">Tekton</li>
+        </ul>
+        <div class="callout mt-4">
+          <strong>Migrating between platforms?</strong> Moving off one distribution is mostly an application and data exercise. See our <a href="services.html#migration">migration service</a> for how we plan waves and cut-overs.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Day-2 operations</span>
+        <h2>Day-2 support we provide</h2>
+        <p class="lead">We work alongside your vendor subscription: we handle the day-to-day, and escalate product defects to the vendor with the evidence they need. See <a href="support.html">support plans</a>.</p>
+      </div>
+      <div class="grid grid-3">
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg></div><h3>Upgrades</h3><p>Following each vendor's supported upgrade paths and channels, checking operator and add-on compatibility, and rehearsing on a non-production cluster first.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/></svg></div><h3>Patching</h3><p>Applying z-stream and security errata, OS image updates and operator patches within agreed windows.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-8 4 16 3-8h4"/></svg></div><h3>Monitoring</h3><p>Tuning the built-in monitoring stack, routing alerts to your on-call tooling and adding the application-level signals the defaults miss.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/></svg></div><h3>Backup and DR</h3><p>OADP or Velero schedules, etcd backups, and restore tests that include operators and their custom resources.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V12"/><path d="M10 20V8"/><path d="M16 20V4"/><path d="M2 20h20"/></svg></div><h3>Scaling and licences</h3><p>Adding nodes and clusters, and keeping an eye on subscription usage so licence true-ups are not a surprise.</p></div>
+        <div class="card"><div class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3l10 18H2z"/><path d="M12 10v4"/><path d="M12 17.5h.01"/></svg></div><h3>Incident response</h3><p>First- and second-line troubleshooting, with vendor support cases opened and followed through when a product fix is needed.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container two-col">
+      <div style="min-width:0">
+        <span class="eyebrow">Lessons learned</span>
+        <h2>Common pitfalls we prevent</h2>
+        <ul class="check-list">
+          <li><strong>Choosing on a demo</strong> rather than a proof of concept with your own workloads.</li>
+          <li><strong>Leaning on proprietary APIs</strong> everywhere, which makes leaving expensive later.</li>
+          <li><strong>Skipping minor versions</strong> until the upgrade path becomes a multi-step project.</li>
+          <li><strong>Under-counting cores</strong> for licensing and getting a large true-up bill.</li>
+          <li><strong>Leaving defaults untouched</strong>: open self-provisioning, no quotas, no network policies.</li>
+          <li><strong>Assuming the vendor handles everything</strong>; support contracts cover the product, not your configuration.</li>
+        </ul>
+      </div>
+      <div style="min-width:0">
+        <span class="eyebrow">Timeline</span>
+        <h2>A typical project</h2>
+        <div class="table-wrap">
+          <table>
+            <caption class="muted" style="caption-side:bottom;padding:10px 16px;text-align:left">Durations are typical ranges. Procurement of subscriptions is usually in parallel.</caption>
+            <thead><tr><th scope="col">Phase</th><th scope="col">Duration</th><th scope="col">Deliverable</th></tr></thead>
+            <tbody>
+              <tr><td>Selection and proof of concept</td><td>2–4 weeks</td><td>Scorecard, PoC results, recommendation</td></tr>
+              <tr><td>Design</td><td>1–2 weeks</td><td>Tenancy, network, identity and DR design</td></tr>
+              <tr><td>Installation</td><td>1–3 weeks</td><td>Clusters per environment, integrations</td></tr>
+              <tr><td>Platform configuration</td><td>2–4 weeks</td><td>GitOps, pipelines, policies, backup</td></tr>
+              <tr><td>Team onboarding</td><td>2–6 weeks</td><td>Golden paths, first teams live, training</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col">
+      <div style="min-width:0">
+        <span class="eyebrow">FAQ</span>
+        <h2>Enterprise platform questions</h2>
+        <p class="muted">Related services: <a href="services.html#assessment">platform assessment</a>, <a href="services.html#platform">platform engineering</a>, <a href="services.html#migration">migration</a>, <a href="services.html#training">training</a>, and <a href="support.html">support</a>.</p>
+      </div>
+      <div class="faq">
+        <details><summary>Are you partnered with any of these vendors?</summary><div>Our recommendations are not tied to resale margins. We will tell you when a managed cloud service or upstream Kubernetes is the better answer, even if that means no platform subscription at all.</div></details>
+        <details><summary>Is OpenShift "just Kubernetes"?</summary><div>It is a certified Kubernetes distribution with a lot added on top: an immutable OS, operators for nearly every component, stricter security defaults and its own developer tooling. Standard Kubernetes manifests usually work, but images that run as root or rely on privileged access may need changes.</div></details>
+        <details><summary>Can Rancher manage our OpenShift or cloud clusters?</summary><div>Rancher can import and manage most conformant clusters, including EKS, AKS and GKE. Depth of management varies by cluster type, so we check the specific features you need.</div></details>
+        <details><summary>How hard is migrating from one platform to another?</summary><div>It depends mostly on how much platform-specific functionality your apps use. Plain Deployments, Services and Helm charts move easily; proprietary build systems, routes, security constraints and operators take more work. We start with an inventory that quantifies this.</div></details>
+      </div>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+</body>
+</html>

@@ -1,0 +1,342 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kubernetes Platform Decision Guide | KubeSetu</title>
+  <meta name="description" content="Answer eight questions about regulation, connectivity, skills, hardware, cloud, edge, GPUs and budget to see which Kubernetes infrastructure fits you best, with a runner-up option.">
+  <link rel="icon" href="assets/img/logo.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="assets/css/style.css">
+  <script src="assets/js/main.js"></script>
+</head>
+<body>
+<a class="skip-link" href="#main">Skip to content</a>
+
+<!-- ===== HEADER (copy verbatim to every page) ===== -->
+<header class="site-header">
+  <nav class="container nav" aria-label="Main">
+    <a class="logo" href="index.html">
+      <img src="assets/img/logo.svg" alt="" width="34" height="34">
+      <span>Kube<em>Setu</em></span>
+    </a>
+    <button class="nav-toggle" aria-label="Open menu" aria-expanded="false">&#9776;</button>
+    <ul class="nav-links">
+      <li><a href="services.html">Services</a></li>
+      <li><a href="infrastructure.html">Infrastructure</a></li>
+      <li><a href="industries.html">Industries</a></li>
+      <li><a href="support.html">Support Plans</a></li>
+      <li><a href="resources.html">Resources</a></li>
+      <li><a href="blog.html">Blog</a></li>
+      <li><a href="about.html">About</a></li>
+      <li><button class="theme-toggle" aria-label="Toggle dark mode">&#9680;</button></li>
+      <li><a class="btn btn-primary btn-sm" href="assessment.html">Free Assessment</a></li>
+    </ul>
+  </nav>
+</header>
+<!-- ===== /HEADER ===== -->
+
+<main id="main">
+<section class="page-hero">
+    <div class="container">
+      <div class="breadcrumb"><a href="index.html">Home</a> / <a href="resources.html">Resources</a> / Decision Guide</div>
+      <span class="eyebrow">Planning tool</span>
+      <h1>Which Kubernetes platform fits you?</h1>
+      <p class="lead">Eight quick questions about your constraints. You get a recommended infrastructure type with the reasoning behind it, plus a runner-up worth considering. Nothing you enter leaves your browser.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container two-col">
+      <form id="guide" style="min-width:0" novalidate>
+        <fieldset>
+          <legend>1. Data residency and regulation</legend>
+          <label class="option"><input type="radio" name="residency" value="none"> No special requirements</label>
+          <label class="option"><input type="radio" name="residency" value="region"> Data must stay in a country or region, but a cloud region there is acceptable</label>
+          <label class="option"><input type="radio" name="residency" value="premises"> Data or systems must stay on infrastructure we own or control</label>
+          <label class="option"><input type="radio" name="residency" value="isolated"> Classified or isolated networks; no external connectivity allowed</label>
+        </fieldset>
+        <fieldset>
+          <legend>2. Internet connectivity where workloads run</legend>
+          <label class="option"><input type="radio" name="connectivity" value="reliable"> Reliable, always on</label>
+          <label class="option"><input type="radio" name="connectivity" value="intermittent"> Limited or intermittent at some locations</label>
+          <label class="option"><input type="radio" name="connectivity" value="none"> None, by design or policy</label>
+        </fieldset>
+        <fieldset>
+          <legend>3. Team size and Kubernetes skills</legend>
+          <label class="option"><input type="radio" name="team" value="small"> Small team, little Kubernetes experience</label>
+          <label class="option"><input type="radio" name="team" value="medium"> A few engineers with some Kubernetes experience</label>
+          <label class="option"><input type="radio" name="team" value="large"> Dedicated, experienced platform or infrastructure team</label>
+        </fieldset>
+        <fieldset>
+          <legend>4. Existing hardware and virtualisation</legend>
+          <label class="option"><input type="radio" name="hardware" value="none"> Little or none, or it is near end of life</label>
+          <label class="option"><input type="radio" name="hardware" value="virt"> A virtualisation platform with spare capacity (vSphere, OpenStack, Nutanix, Proxmox)</label>
+          <label class="option"><input type="radio" name="hardware" value="servers"> Physical servers we could dedicate, or we want to drop the hypervisor</label>
+        </fieldset>
+        <fieldset>
+          <legend>5. Public cloud commitment</legend>
+          <label class="option"><input type="radio" name="cloud" value="one"> Mostly one cloud provider</label>
+          <label class="option"><input type="radio" name="cloud" value="multi"> Several clouds, or cloud plus data centre</label>
+          <label class="option"><input type="radio" name="cloud" value="none"> No cloud, or we prefer to avoid it</label>
+        </fieldset>
+        <fieldset>
+          <legend>6. Edge locations (stores, factories, sites)</legend>
+          <label class="option"><input type="radio" name="edge" value="no"> None</label>
+          <label class="option"><input type="radio" name="edge" value="few"> A few sites</label>
+          <label class="option"><input type="radio" name="edge" value="many"> Many sites (tens to thousands)</label>
+        </fieldset>
+        <fieldset>
+          <legend>7. GPU and AI needs</legend>
+          <label class="option"><input type="radio" name="gpu" value="none"> None</label>
+          <label class="option"><input type="radio" name="gpu" value="some"> Some inference or occasional experiments</label>
+          <label class="option"><input type="radio" name="gpu" value="heavy"> Significant training, fine-tuning or model serving</label>
+        </fieldset>
+        <fieldset>
+          <legend>8. Budget model</legend>
+          <label class="option"><input type="radio" name="budget" value="opex"> Operating expense (pay as you go)</label>
+          <label class="option"><input type="radio" name="budget" value="capex"> Capital expense (buy and own hardware)</label>
+          <label class="option"><input type="radio" name="budget" value="mixed"> A mix of both</label>
+        </fieldset>
+        <div class="btn-row">
+          <button type="submit" class="btn btn-primary">Show my recommendation</button>
+          <button type="reset" class="btn btn-outline">Start again</button>
+        </div>
+      </form>
+
+      <div class="sticky" style="min-width:0">
+        <div class="result-box" id="result" aria-live="polite" tabindex="-1">
+          <span class="eyebrow">Your recommendation</span>
+          <div id="result-body">
+            <p class="muted">Answer the questions and select <strong>Show my recommendation</strong>. The result is a starting point for a conversation, not a final architecture.</p>
+          </div>
+        </div>
+        <p class="muted mt-2" style="font-size:.88rem">This guide uses simple weighted rules based on common patterns. Real decisions also depend on applications, contracts and costs; see the <a href="cost-estimator.html">cost estimator</a> or book an <a href="assessment.html">assessment</a>.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section-alt">
+    <div class="container">
+      <div class="section-head">
+        <span class="eyebrow">Operating models</span>
+        <h2>Managed vs self-managed vs enterprise distribution</h2>
+        <p class="lead">Whichever infrastructure you land on, you also choose who runs the control plane and who you call when it breaks.</p>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th scope="col">Aspect</th><th scope="col">Managed service</th><th scope="col">Self-managed (upstream / open source)</th><th scope="col">Enterprise distribution</th></tr></thead>
+          <tbody>
+            <tr><th scope="row">Examples</th><td>EKS, AKS, GKE, OKE, DOKS, LKE</td><td>kubeadm, RKE2, k3s, k0s, Talos</td><td>OpenShift, Rancher Prime, Tanzu, Mirantis Kubernetes Engine</td></tr>
+            <tr><th scope="row">Control plane run by</th><td>Cloud provider</td><td>Your team (or a partner)</td><td>Your team, with vendor tooling and support; some offered as managed services</td></tr>
+            <tr><th scope="row">Upgrades</th><td>Provider-assisted; you schedule and handle nodes and add-ons</td><td>Fully yours, including etcd and certificates</td><td>Vendor-tested upgrade paths; you run them</td></tr>
+            <tr><th scope="row">Flexibility</th><td>Limited to the provider's options</td><td>Highest; any component, any version</td><td>Moderate; within the vendor's supported stack</td></tr>
+            <tr><th scope="row">Where it runs</th><td>That provider's cloud (some offer on-premises variants)</td><td>Anywhere</td><td>Anywhere the vendor supports</td></tr>
+            <tr><th scope="row">Support</th><td>Provider support plan for the service</td><td>Community, plus a partner if you choose</td><td>Vendor subscription covering the whole stack</td></tr>
+            <tr><th scope="row">Cost model</th><td>Per-cluster fee plus compute; opex</td><td>No licence; hardware and people time</td><td>Subscription (often per core) plus infrastructure</td></tr>
+            <tr><th scope="row">Skills needed</th><td>Moderate</td><td>High</td><td>Moderate to high</td></tr>
+            <tr><th scope="row">Best for</th><td>Cloud-first teams that want to focus on applications</td><td>Experienced teams, edge, bare metal, cost-sensitive scale</td><td>Regulated enterprises wanting one supported platform</td></tr>
+            <tr><th scope="row">Learn more</th><td><a href="infra-managed-cloud.html">Managed cloud</a></td><td><a href="infra-on-prem.html">On-premises</a>, <a href="infra-bare-metal.html">bare metal</a>, <a href="infra-edge.html">edge</a></td><td><a href="infra-enterprise-platforms.html">Enterprise platforms</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted mt-2">Need help either way? Our <a href="services.html#assessment">assessment and strategy</a> service turns this into a costed plan, and <a href="support.html">support plans</a> cover any of the three models.</p>
+    </div>
+  </section>
+
+  <!-- Closing CTA (reuse on most pages) -->
+  <section class="section">
+    <div class="container">
+      <div class="cta-band">
+        <div>
+          <h2>Not sure where to start?</h2>
+          <p>Take the 3-minute Kubernetes readiness assessment and get a prioritised plan.</p>
+        </div>
+        <div class="btn-row">
+          <a class="btn btn-accent" href="assessment.html">Start assessment</a>
+          <a class="btn btn-outline" href="contact.html">Talk to an engineer</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- ===== FOOTER (copy verbatim to every page) ===== -->
+<footer class="site-footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="index.html"><img src="assets/img/logo.svg" alt="" width="34" height="34"><span>Kube<em>Setu</em></span></a>
+        <p class="mt-2">Kubernetes infrastructure implementation and 24/7 support — on any cloud, in your data centre, on bare metal and at the edge.</p>
+      </div>
+      <div>
+        <h4>Services</h4>
+        <ul>
+          <li><a href="services.html#assessment">Assessment &amp; Strategy</a></li>
+          <li><a href="services.html#build">Cluster Build</a></li>
+          <li><a href="services.html#migration">Migration</a></li>
+          <li><a href="services.html#gitops">GitOps &amp; CI/CD</a></li>
+          <li><a href="services.html#security">Security &amp; Compliance</a></li>
+          <li><a href="support.html">Managed Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Infrastructure</h4>
+        <ul>
+          <li><a href="infra-managed-cloud.html">EKS / AKS / GKE</a></li>
+          <li><a href="infra-on-prem.html">On-Premises</a></li>
+          <li><a href="infra-bare-metal.html">Bare Metal</a></li>
+          <li><a href="infra-edge.html">Edge &amp; IoT</a></li>
+          <li><a href="infra-hybrid.html">Hybrid &amp; Multi-Cloud</a></li>
+          <li><a href="infra-enterprise-platforms.html">OpenShift / Rancher / Tanzu</a></li>
+          <li><a href="infra-air-gapped.html">Air-Gapped</a></li>
+          <li><a href="infra-gpu-ai.html">GPU &amp; AI</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <ul>
+          <li><a href="about.html">About</a></li>
+          <li><a href="industries.html">Industries</a></li>
+          <li><a href="blog.html">Blog</a></li>
+          <li><a href="resources.html">Resources</a></li>
+          <li><a href="cost-estimator.html">Cost Estimator</a></li>
+          <li><a href="decision-guide.html">Platform Decision Guide</a></li>
+          <li><a href="contact.html">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; <span data-year></span> KubeSetu. All rights reserved.</span>
+      <span>Kubernetes&reg; is a registered trademark of The Linux Foundation.</span>
+    </div>
+  </div>
+</footer>
+<!-- ===== /FOOTER ===== -->
+<script>
+(function () {
+  var TYPES = {
+    managed:    { name: "Managed cloud Kubernetes",   page: "infra-managed-cloud.html",        blurb: "EKS, AKS or GKE with a well-designed landing zone, identity and autoscaling." },
+    onprem:     { name: "On-premises Kubernetes",     page: "infra-on-prem.html",              blurb: "kubeadm or RKE2 on your existing virtualisation platform." },
+    baremetal:  { name: "Bare-metal Kubernetes",      page: "infra-bare-metal.html",           blurb: "Kubernetes directly on servers with automated provisioning and BGP networking." },
+    edge:       { name: "Edge Kubernetes fleet",      page: "infra-edge.html",                 blurb: "Lightweight clusters at each site, managed centrally with GitOps." },
+    hybrid:     { name: "Hybrid / multi-cloud",       page: "infra-hybrid.html",               blurb: "One operating model across clouds and data centres." },
+    enterprise: { name: "Enterprise platform",        page: "infra-enterprise-platforms.html", blurb: "OpenShift, Rancher, Tanzu or Mirantis with vendor support." },
+    airgapped:  { name: "Air-gapped / sovereign",     page: "infra-air-gapped.html",           blurb: "Isolated clusters with a controlled, signed software supply chain." },
+    gpu:        { name: "GPU and AI platform",        page: "infra-gpu-ai.html",               blurb: "Shared GPU pools with queueing, model serving and cost control." }
+  };
+
+  // Each answer adds points (and a reason) to one or more infrastructure types.
+  var RULES = {
+    residency: {
+      none:     [["managed", 3, "No residency constraints, so a managed cloud service is the simplest option."], ["hybrid", 1, ""]],
+      region:   [["managed", 2, "In-country cloud regions can satisfy regional residency rules."], ["hybrid", 2, "Mixing regions or providers helps meet residency per market."], ["onprem", 1, ""], ["enterprise", 1, ""]],
+      premises: [["onprem", 3, "Data must stay on infrastructure you control."], ["baremetal", 2, "Owned hardware keeps data on your premises."], ["enterprise", 2, "A supported distribution simplifies audits on your own infrastructure."], ["managed", -3, ""], ["airgapped", 1, ""]],
+      isolated: [["airgapped", 6, "Classified or isolated networks require an air-gapped design."], ["managed", -5, ""], ["hybrid", -2, ""], ["edge", -1, ""]]
+    },
+    connectivity: {
+      reliable:     [["managed", 1, ""]],
+      intermittent: [["edge", 3, "Intermittent connectivity calls for sites that keep running offline."]],
+      none:         [["airgapped", 5, "No internet connectivity means every artifact must be imported offline."], ["managed", -5, ""]]
+    },
+    team: {
+      small:  [["managed", 3, "A small team benefits most from a provider running the control plane."], ["enterprise", 1, ""], ["baremetal", -2, ""], ["hybrid", -2, ""], ["airgapped", -1, ""]],
+      medium: [["managed", 1, ""], ["onprem", 1, ""], ["enterprise", 2, "A vendor-supported platform gives a mid-sized team guardrails and backup."]],
+      large:  [["baremetal", 2, "An experienced team can run bare metal and capture its cost benefits."], ["hybrid", 2, "An experienced platform team can operate several environments consistently."], ["onprem", 1, ""]]
+    },
+    hardware: {
+      none:    [["managed", 2, "Without usable hardware, cloud avoids an up-front purchase."], ["baremetal", -2, ""], ["onprem", -2, ""]],
+      virt:    [["onprem", 3, "Your existing virtualisation platform can host clusters right away."], ["enterprise", 1, ""]],
+      servers: [["baremetal", 3, "Dedicated servers let you run Kubernetes without a hypervisor layer."], ["onprem", 1, ""]]
+    },
+    cloud: {
+      one:   [["managed", 3, "You are committed to one cloud, so its managed Kubernetes integrates best."]],
+      multi: [["hybrid", 4, "You already span several clouds or cloud plus data centre."]],
+      none:  [["onprem", 1, ""], ["baremetal", 1, ""], ["managed", -2, ""]]
+    },
+    edge: {
+      no:   [],
+      few:  [["edge", 2, "Edge sites need lightweight local clusters."], ["hybrid", 1, ""]],
+      many: [["edge", 5, "Many sites need fleet management, OTA updates and offline operation."]]
+    },
+    gpu: {
+      none:  [],
+      some:  [["gpu", 2, "GPU workloads benefit from sharing and scheduling controls."]],
+      heavy: [["gpu", 5, "Significant AI work needs a dedicated GPU platform with queueing and serving."], ["baremetal", 1, ""]]
+    },
+    budget: {
+      opex:  [["managed", 2, "An opex budget fits pay-as-you-go cloud services."], ["hybrid", 1, ""]],
+      capex: [["onprem", 2, "A capex model favours owned infrastructure."], ["baremetal", 2, "Owned servers give the lowest unit cost over their life."], ["airgapped", 1, ""]],
+      mixed: [["hybrid", 2, "A mixed budget suits a steady owned base with cloud for peaks."], ["enterprise", 1, ""]]
+    }
+  };
+  var QUESTIONS = ["residency", "connectivity", "team", "hardware", "cloud", "edge", "gpu", "budget"];
+
+  var form = document.getElementById("guide");
+  var out = document.getElementById("result-body");
+  var box = document.getElementById("result");
+
+  function esc(s) { var d = document.createElement("div"); d.textContent = s; return d.innerHTML; }
+
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    var answers = {}, missing = [];
+    QUESTIONS.forEach(function (q, i) {
+      var c = form.querySelector('input[name="' + q + '"]:checked');
+      if (c) answers[q] = c.value; else missing.push(i + 1);
+    });
+    if (missing.length) {
+      out.innerHTML = '<p><strong>Please answer question' + (missing.length > 1 ? "s " : " ") + missing.join(", ") + '.</strong></p>';
+      box.focus();
+      return;
+    }
+
+    var score = {}, reasons = {};
+    Object.keys(TYPES).forEach(function (k) { score[k] = 0; reasons[k] = []; });
+    QUESTIONS.forEach(function (q) {
+      RULES[q][answers[q]].forEach(function (r) {
+        score[r[0]] += r[1];
+        if (r[1] > 0 && r[2]) reasons[r[0]].push(r[2]);
+      });
+    });
+
+    var ranked = Object.keys(score).sort(function (a, b) { return score[b] - score[a]; });
+    var top = ranked[0], second = ranked[1];
+    var maxScore = Math.max(1, score[top]);
+
+    var html = '<h2 style="font-size:1.5rem" class="mt-2">' + esc(TYPES[top].name) + '</h2>';
+    html += '<p class="muted">' + esc(TYPES[top].blurb) + '</p>';
+    html += '<h3>Why this fits</h3><ul class="check-list">';
+    (reasons[top].length ? reasons[top] : ["It scored best across your answers overall."]).forEach(function (r) { html += "<li>" + esc(r) + "</li>"; });
+    html += '</ul><a class="btn btn-primary btn-sm" href="' + TYPES[top].page + '">Explore this option</a>';
+
+    html += '<h3 class="mt-4">Runner-up: ' + esc(TYPES[second].name) + '</h3>';
+    html += '<div class="meter" aria-hidden="true"><span style="width:' + Math.max(10, Math.round(Math.max(0, score[second]) / maxScore * 100)) + '%"></span></div>';
+    html += '<p class="muted">' + esc(TYPES[second].blurb) + (reasons[second].length ? " " + esc(reasons[second][0]) : "") + '</p>';
+    html += '<a class="btn btn-outline btn-sm" href="' + TYPES[second].page + '">Explore the runner-up</a>';
+
+    var notes = [];
+    if (answers.gpu === "heavy" && top !== "gpu" && second !== "gpu") notes.push('Your GPU needs are significant: plan a dedicated <a href="infra-gpu-ai.html">GPU pool</a> on top of this.');
+    if (answers.edge === "many" && top !== "edge" && second !== "edge") notes.push('With many sites, you will also need an <a href="infra-edge.html">edge fleet</a> design.');
+    if ((answers.residency === "isolated" || answers.connectivity === "none") && top !== "airgapped") notes.push('Isolation requirements mean the build must follow <a href="infra-air-gapped.html">air-gapped practices</a>.');
+    if (answers.team === "small" && (top === "baremetal" || top === "hybrid" || top === "airgapped")) notes.push('This option is demanding for a small team; consider pairing it with a <a href="support.html">support plan</a>.');
+    if (notes.length) {
+      html += '<div class="callout mt-4"><strong>Also consider</strong><ul class="mb-0">';
+      notes.forEach(function (n) { html += "<li>" + n + "</li>"; });
+      html += "</ul></div>";
+    }
+    html += '<p class="muted mt-2 mb-0" style="font-size:.88rem">Next: <a href="cost-estimator.html">estimate costs</a> or <a href="assessment.html">take the assessment</a>.</p>';
+
+    out.innerHTML = html;
+    box.focus();
+  });
+
+  form.addEventListener("reset", function () {
+    out.innerHTML = '<p class="muted">Answer the questions and select <strong>Show my recommendation</strong>.</p>';
+  });
+})();
+</script>
+</body>
+</html>
